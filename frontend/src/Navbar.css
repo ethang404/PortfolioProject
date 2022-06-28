@@ -1,0 +1,22 @@
+.Nav {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+nav ul li{
+	list-style-type: none;
+	display: inline-block;
+	padding: 10px  25px;
+}
+
+.Nav-elements a {
+	background-color:#f9004d;
+	color: white;
+	text-decoration: none;
+	border: 2px solid transparent;
+	font-weight: bold;
+	padding: 10px 25px;
+	border-radius: 30px;
+
+	box-shadow: 5px 3px 0px 0px #98FF98;
+}

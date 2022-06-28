@@ -1,0 +1,102 @@
+.main{
+	background-image: url(./images_downloads/ales-nesetril-Im7lZjxeLhg-unsplash.jpg);
+	background-size: cover;
+	background-position: center;
+	width: 100%;
+	height: 100vh;
+}
+.About{
+	display: flex;
+	background-image: url(./images_downloads/isai-ramos-_3SFFsWqCVg-unsplash.jpg);
+	background-size: fill;
+	opacity: 0.9;
+	border-radius: 20%;
+	align-content: center;
+	justify-content: space-around;
+	margin: 70px 300px;
+}
+.About-Me{
+	color: white;
+	line-height: 2rem;
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+}
+
+.Pic{
+	
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-top: 30px;
+	padding-bottom: 30px;
+	border-radius: 25%;
+	width: 200px;
+	height: 200px;
+}
+span{
+	color: purple;
+}
+
+.Skills-list{
+    margin-top: 2rem;
+    margin-bottom: 5rem;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 2.5rem;
+    grid-template-areas: 'skill1 skill2 skill3 skill4';
+    height: auto;
+    text-align: center;
+    place-items: center;
+}
+.Skills-title{
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.skill1{
+	color:chocolate;
+}
+.skill2{
+	color:chocolate;
+}
+.skill3{
+	color:chocolate;
+}
+.skill4{
+	color:chocolate;
+}
+
+.Projects{
+	background-image: url(./images_downloads/kelly-sikkema-tk9RQCq5eQo-unsplash.jpg);
+	background-size: cover;
+	background-position: cover;
+}
+.Projects-inner{
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	column-gap: 40px;
+	justify-content: space-around;
+	align-items: center;
+	margin: 0 auto;
+	padding: 50px 30px;
+	max-width: 1200px;
+}
+.Project1 a{
+	background-color:#f9004d;
+	color: white;
+	text-decoration: none;
+	border: 2px solid transparent;
+	font-weight: bold;
+	
+	border-radius: 30px;
+}
+.Project2 a{
+	background-color:#f9004d;
+	color: white;
+	text-decoration: none;
+	border: 2px solid transparent;
+	font-weight: bold;
+	
+	border-radius: 30px;
+}

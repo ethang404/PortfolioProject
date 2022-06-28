@@ -1,0 +1,57 @@
+-A back end only returns information with API(REST), CRUD operations. Get back end to front end w/ "fetch(url)"
+
+Important info: 
+
+	vs code extensions
+	install pip
+	install npm and node.js
+	
+
+	pip install django djangorestframework
+	django-admin startproject [name]
+	django-admin startapp [name]
+
+	--add app config path and rest framework to project settings
+
+django running server stuff: 
+
+	python .\manage.py makemigrations
+	python .\manage.py migrate
+	python .\manage.py runserver
+
+React: 
+	npx create-react-app [name]
+	npm start
+		--Async/Await in JS->..
+
+React(Material UI): provides easy setup for lots of front end design. Doesn't provide forms.
+
+	https://mui.com/material-ui/getting-started/
+	
+
+Node.js: 
+	npm init -y
+	
+
+Redux: ..
+
+combine:
+	pip install django-cors-headers
+	add 'corsheaders' to installed apps
+	add 'corsheaders.middleware.CorsMiddleware' to middleware
+	whitelist url of react: CORS_ORIGIN_WHITELIST = [ "http://localhost:3000",]
+
+sql stuff(with django):
+	pip install mysqlclient
+	engine: 'django.db.backends.mysql'
+	name: name of databse schema set up in sql workbench
+	user: root(default)
+	pass: whatever it is
+	host: url or ip: local is 127.0.0.1
+	port: 3306 default
+
+github info:
+	https://kbroman.org/github_tutorial/pages/fork.html
+	git init (in cd of folder to make repository) -- to set up github location :)
+	git remote add origin 'github link to repo'
+	token in discord
