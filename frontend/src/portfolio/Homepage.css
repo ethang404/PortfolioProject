@@ -57,6 +57,22 @@ span{
 .skill1{
 	color:chocolate;
 }
+.GithubPic{
+	width: 60px;
+	height: 60px;
+}
+.FrontendPic{
+	width: 60px;
+	height: 60px;
+}
+.BackendPic{
+	width: 60px;
+	height: 60px;
+}
+.TeamworkPic{
+	width: 60px;
+	height: 60px;
+}
 .skill2{
 	color:chocolate;
 }

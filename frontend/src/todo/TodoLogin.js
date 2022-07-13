@@ -4,19 +4,17 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import {useNavigate} from "react-router-dom";
 
-import "../Navbar";
+
 import Navbar from "../Navbar";
 
-export default function Todo(){
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: 'React POST Request Example' })
-    };
+export default function TodoLogin(){
+    
     let navigate = useNavigate();
-    //Add onChange to Switch
+    const[authTokens, setAuthTokens] = useState([]);
     const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
+
+
 
     const [darkMode, setDarkMode] = useState(true);
     const darkTheme = createTheme({
@@ -24,6 +22,29 @@ export default function Todo(){
           mode: darkMode ? "dark" : "light",
         },
     });
+
+    async function handleLogin(){
+        let response = await fetch('http://127.0.0.1:8000/api/token/', {
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({'username': username, 'password':password})
+        })
+        let data = await response.json()
+
+        console.log(data.access)
+        console.log(data.refresh)
+        if(response.status === 200){
+            setAuthTokens(data)
+            localStorage.setItem('accessToken', JSON.stringify(data.access))
+            localStorage.setItem('refreshToken', JSON.stringify(data.refresh))
+            localStorage.setItem('authTokens', JSON.stringify(data))
+            navigate('/Project/To-do/Dashboard')
+        }else{
+            alert('Error with Credentials!')
+        }
+    }
 
     return(
         <div>
@@ -52,8 +73,8 @@ export default function Todo(){
                         <TextField id="outlined-password-input" label="Password" type="password" required value = {password} onChange={(e) => setPassword(e.target.value)} />
                     </Grid>
                     <Grid item xs = {6}>
-                        <Button>Login</Button>
-                        <a href = "/register">Sign up Here</a>
+                        <Button onClick = {handleLogin}>Login</Button>
+                        <a href = "/Project/To-do-register">Sign up Here</a>
                     </Grid>
                 </Grid>
             </ThemeProvider>
