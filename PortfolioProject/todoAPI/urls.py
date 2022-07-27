@@ -12,5 +12,5 @@ urlpatterns = [
     path('api/register',registerUser),
     path('api/createTask',registerTask),
     path('api/displayTasks/',displayTasks),
-    path('api/updateTask',updateTask)
+    path('api/updateTask/',updateTask)
 ]

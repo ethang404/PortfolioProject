@@ -5,7 +5,7 @@ import TodoLogin from "./todo/TodoLogin";
 import TodoReg from "./todo/TodoReg";
 import TodoHomepage from "./todo/TodoHomepage";
 import PrivateRoutes from './utils/PrivateRoutes';
-
+import TaskEdit from "./todo/TaskEdit";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
 function App() {
@@ -19,6 +19,7 @@ function App() {
 
 					<Route element={<PrivateRoutes />}> 
 						<Route path="/Project/To-do/Dashboard" element={<TodoHomepage />}></Route>
+						<Route path="/Project/To-do/Task/:id" element={<TaskEdit />}></Route>
 					</Route>
 
 					
