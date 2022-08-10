@@ -4,6 +4,7 @@ import jwt_decode from "jwt-decode";
 import {useState} from 'react';
 import { useNavigate } from "react-router-dom";
 import "./TodoHome.css";
+import TaskEdit from "./TaskEdit";
 
 export default function TodoHomepage(){ 
     let [userID, setUser] = useState(()=> localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens'))['user_id'] : null)
@@ -81,7 +82,7 @@ export default function TodoHomepage(){
                             <th>time due</th>
                             <th>Complete</th>
                             <th>Toggle Complete</th>
-                            
+                            <th>Delete Task </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -93,7 +94,7 @@ export default function TodoHomepage(){
                                 <td data-label = "time due">{note.task_due}</td>
                                 <td data-label = "Complete">{JSON.stringify(note.isCompleted)}</td>
                                 <td data-label = "Toggle Complete"><Button className = "completeButton">completeHere</Button></td>
-                                <td><Button className = "trash">Delete Task</Button></td>
+                                <td data-label = "Delete Task"><Button className = "trash">Delete Task</Button></td>
                             </tr>
                         )}
                     </tbody>

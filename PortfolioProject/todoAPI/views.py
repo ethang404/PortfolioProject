@@ -60,7 +60,6 @@ def updateTask(request):
     task_id = request.data['id']
     task = Task.objects.filter(id = task_id)[0]
     serializer = TaskSerializer(instance = task,data = request.data)
-    print(serializer.error_messages)
     if serializer.is_valid(raise_exception=True):
         serializer.save()
         return Response("Task Updated", status=status.HTTP_200_OK)

@@ -1,7 +1,19 @@
+*{
+    margin: 0;
+    padding: 0;
+}
 
-
+.Parent{
+    display: grid;
+    place-items: center;
+    background-color: bisque;
+}
+.Notes{
+    background-color: lightgrey;
+    
+}
 table {
-    width: 100%;
+    
     border-spacing: 0px;
     table-layout: fixed;
     margin-left:auto;
@@ -14,3 +26,6 @@ th {
 td {
     border: 1px solid black;
 }
+
+
+
