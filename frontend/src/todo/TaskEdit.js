@@ -67,6 +67,7 @@ export default function TaskEdit(){
 						name="task_name"
 						value={taskDetails.task_name}
 						onChange={onChangeHandler}
+                        required
 					/>
 				</label>
 				<label>
@@ -78,7 +79,7 @@ export default function TaskEdit(){
 						onChange={onChangeHandler}
 					/>
 				</label>
-                <Checkbox checked={taskDetails.isCompleted}  />
+                <Checkbox checked={taskDetails.isCompleted} onClick={(event) => {setTaskDetails({...taskDetails, isCompleted: event.target.checked})}} />
 
                 <DateTimePicker onChange={(date) => setTaskDetails({ ...taskDetails, ["task_due"]: date })} value={taskDetails.task_due} />
 				<input type="submit" value="TaskEdit" />

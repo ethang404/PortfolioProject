@@ -11,7 +11,7 @@ class Task(models.Model):
         return datetime.date.today() + timedelta(days=14)
 
     task_name = models.CharField(max_length=40, blank = False)
-    task_info = models.TextField(max_length=80)
+    task_info = models.TextField(max_length=100)
     task_created = models.DateTimeField(auto_now_add = True)
     task_due = models.DateTimeField(default=calculate)
     isCompleted = models.BooleanField(default = False)

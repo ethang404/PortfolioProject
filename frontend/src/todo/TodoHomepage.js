@@ -4,6 +4,7 @@ import jwt_decode from "jwt-decode";
 import {useState} from 'react';
 import { useNavigate } from "react-router-dom";
 import "./TodoHome.css";
+import Checkbox from '@mui/material/Checkbox';
 import TaskEdit from "./TaskEdit";
 
 export default function TodoHomepage(){ 
@@ -25,6 +26,25 @@ export default function TodoHomepage(){
             console.log(data)
             setNotes(data)
     }
+
+    async function deleteTask(e, id){
+        e.stopPropagation();
+        let response = await fetch('http://127.0.0.1:8000/api/deleteTask/', {
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization':'Bearer ' + JSON.parse(localStorage.getItem('accessToken'))
+                },
+                body: JSON.stringify({
+                    "id": id
+               })
+            })
+            let data = await response.json()
+            console.log(data)
+            getNotes()
+            
+    }
+
     useEffect(() => {
         console.log(Date.now())
         console.log(jwt_decode(localStorage.getItem('accessToken'))['exp'] * 1000)
@@ -66,12 +86,30 @@ export default function TodoHomepage(){
         localStorage.removeItem('refreshToken')
         navigate('/Project/To-do-Login')
     }
+    async function updateComplete(e, note){
+        e.stopPropagation();
+        note.isCompleted = !note.isCompleted;
+        //note.id = parseInt(note.id)
+        
+        let response = await fetch('http://127.0.0.1:8000/api/updateTask/', {
+                method:'PATCH',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization':'Bearer ' + JSON.parse(localStorage.getItem('accessToken'))
+                },
+                body: JSON.stringify(note)
+            })
+            let data = await response.json()
+            console.log(data)
+            getNotes()
+            
+    }
 
     return(
         <div className = "Parent">
             <h1 className = "Title">This is my todo Homepage! Hope you enjoy!</h1>
             <Button className = "LogoutButton" onClick = {handleLogout}>Logout Here</Button>
-
+            <Button className = "AddTask" onClick={() => navigate('/Project/To-do/AddTask/')}>Add a Task</Button>
             <div className = "Notes">
                 <table className="Table">
                     <thead>
@@ -80,7 +118,7 @@ export default function TodoHomepage(){
                             <th>info</th>
                             <th>time created</th>
                             <th>time due</th>
-                            <th>Complete</th>
+                            <th>is Complete</th>
                             <th>Toggle Complete</th>
                             <th>Delete Task </th>
                         </tr>
@@ -90,11 +128,11 @@ export default function TodoHomepage(){
                             <tr key={note.id} onClick={() => {navigate('/Project/To-do/Task/' + note.id)}}>
                                 <td data-label = "taskName">{note.task_name}</td>
                                 <td data-label = "info">{note.task_info}</td>
-                                <td data-label = "time created">{note.task_created}</td>
-                                <td data-label = "time due">{note.task_due}</td>
-                                <td data-label = "Complete">{JSON.stringify(note.isCompleted)}</td>
-                                <td data-label = "Toggle Complete"><Button className = "completeButton">completeHere</Button></td>
-                                <td data-label = "Delete Task"><Button className = "trash">Delete Task</Button></td>
+                                <td data-label = "time created">{note.task_created.replace("T", " | ").slice(0, 19)}</td>
+                                <td data-label = "time due">{note.task_due.replace("T", " | ").slice(0, 19)}</td>
+                                <td data-label = "is Complete">{JSON.stringify(note.isCompleted)}</td>
+                                <td data-label = "Toggle Complete"><Checkbox checked={note.isCompleted} onClick = {event => updateComplete(event,note)}/></td>
+                                <td data-label = "Delete Task"><Button className = "trash" onClick = {event => deleteTask(event, note.id)}>Delete Task</Button></td>
                             </tr>
                         )}
                     </tbody>

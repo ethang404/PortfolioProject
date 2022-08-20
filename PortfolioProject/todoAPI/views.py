@@ -74,6 +74,14 @@ def displayTasks(request):
     serializer = TaskSerializer(notes, many=True)
     return Response(serializer.data)
 
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def deleteTask(request):
+    task_id = request.data['id']
+    task = Task.objects.get(id = task_id)
+    task.delete()
+    return Response("Task Successfully Deleted", status=status.HTTP_200_OK)
+
 
     
 

@@ -13,7 +13,7 @@
     
 }
 table {
-    
+    text-align: center;
     border-spacing: 0px;
     table-layout: fixed;
     margin-left:auto;
@@ -25,6 +25,7 @@ th {
 }
 td {
     border: 1px solid black;
+    background-color: pink
 }
 
 
