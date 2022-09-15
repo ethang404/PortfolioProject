@@ -123,10 +123,10 @@ WSGI_APPLICATION = 'PortfolioProject.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  
-        'NAME': 'todo_db',  
+        'NAME': 'todo_db',
         'USER': 'root',  
         'PASSWORD': 'pass',  
-        'HOST': '127.0.0.1',  
+        'HOST': 'localhost',  
         'PORT': '3306',  
     }
 }
