@@ -13,9 +13,7 @@ export default function TodoHomepage() {
 			? jwt_decode(localStorage.getItem("authTokens"))["user_id"]
 			: null
 	);
-	let [accessToken, setAccessToken] = useState(
-		localStorage.getItem("accessToken")
-	);
+	let [accessToken, setAccessToken] = useState(localStorage.getItem("accessToken"));
 	let [notes, setNotes] = useState([]);
 
 	let navigate = useNavigate();
@@ -25,8 +23,7 @@ export default function TodoHomepage() {
 			method: "GET",
 			headers: {
 				"Content-Type": "application/json",
-				Authorization:
-					"Bearer " + JSON.parse(localStorage.getItem("accessToken")),
+				Authorization: "Bearer " + JSON.parse(localStorage.getItem("accessToken")),
 			},
 		});
 		let data = await response.json();
@@ -38,10 +35,7 @@ export default function TodoHomepage() {
 		if (!localStorage.getItem("accessToken")) {
 			//if no accessToken
 			navigate("/Project/To-do-Login");
-		} else if (
-			jwt_decode(localStorage.getItem("accessToken"))["exp"] * 1000 <=
-			Date.now()
-		) {
+		} else if (jwt_decode(localStorage.getItem("accessToken"))["exp"] * 1000 <= Date.now()) {
 			//if access token expired -> refresh token.
 
 			let response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
@@ -55,16 +49,11 @@ export default function TodoHomepage() {
 			});
 			let data = await response.json();
 			localStorage.setItem("accessToken", JSON.stringify(data.access));
-			console.log(
-				"accessToken Expired->making new access token w/ refresh token"
-			);
+			console.log("accessToken Expired->making new access token w/ refresh token");
 			console.log(data);
 			setAccessToken(data);
-			getNotes();
-		} else if (
-			jwt_decode(localStorage.getItem("refreshToken"))["exp"] * 1000 <=
-			Date.now()
-		) {
+			getNotes(); //refresh notes after refreshing token
+		} else if (jwt_decode(localStorage.getItem("refreshToken"))["exp"] * 1000 <= Date.now()) {
 			//if refreshToken has expired
 			handleLogout();
 		} else {
@@ -79,8 +68,7 @@ export default function TodoHomepage() {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
-				Authorization:
-					"Bearer " + JSON.parse(localStorage.getItem("accessToken")),
+				Authorization: "Bearer " + JSON.parse(localStorage.getItem("accessToken")),
 			},
 			body: JSON.stringify({
 				id: id,
@@ -113,8 +101,7 @@ export default function TodoHomepage() {
 			method: "PATCH",
 			headers: {
 				"Content-Type": "application/json",
-				Authorization:
-					"Bearer " + JSON.parse(localStorage.getItem("accessToken")),
+				Authorization: "Bearer " + JSON.parse(localStorage.getItem("accessToken")),
 			},
 			body: JSON.stringify(note),
 		});
@@ -129,9 +116,7 @@ export default function TodoHomepage() {
 			<Button className="LogoutButton" onClick={handleLogout}>
 				Logout Here
 			</Button>
-			<Button
-				className="AddTask"
-				onClick={() => navigate("/Project/To-do/AddTask/")}>
+			<Button className="AddTask" onClick={() => navigate("/Project/To-do/AddTask/")}>
 				Add a Task
 			</Button>
 			<div className="Notes">
@@ -153,18 +138,15 @@ export default function TodoHomepage() {
 								key={note.id}
 								onClick={() => {
 									navigate("/Project/To-do/Task/" + note.id);
-								}}>
+								}}
+							>
 								<td data-label="taskName">{note.task_name}</td>
 								<td data-label="info">{note.task_info}</td>
 								<td data-label="time created">
 									{note.task_created.replace("T", " | ").slice(0, 19)}
 								</td>
-								<td data-label="time due">
-									{note.task_due.replace("T", " | ").slice(0, 19)}
-								</td>
-								<td data-label="is Complete">
-									{JSON.stringify(note.isCompleted)}
-								</td>
+								<td data-label="time due">{note.task_due.replace("T", " | ").slice(0, 19)}</td>
+								<td data-label="is Complete">{JSON.stringify(note.isCompleted)}</td>
 								<td data-label="Toggle Complete">
 									<Checkbox
 										checked={note.isCompleted}
@@ -172,9 +154,7 @@ export default function TodoHomepage() {
 									/>
 								</td>
 								<td data-label="Delete Task">
-									<Button
-										className="trash"
-										onClick={(event) => deleteTask(event, note.id)}>
+									<Button className="trash" onClick={(event) => deleteTask(event, note.id)}>
 										Delete Task
 									</Button>
 								</td>
