@@ -3,6 +3,11 @@ const { google } = require("googleapis");
 
 // Creating express Router
 const router = express.Router();
+const cors = require('cors');
+router.use(cors({
+    origin: ['https://www.section.io', 'https://www.google.com/']
+}));
+
 
 /**
  * To use OAuth2 authentication, we need access to a CLIENT_ID, CLIENT_SECRET, AND REDIRECT_URI
@@ -27,21 +32,24 @@ const authorizationUrl = oauth2Client.generateAuthUrl({
 	response_type: "code",
 });
 
-async function getAccessToken() {
+async function getAccessToken(code) {
 	//google should redirect to here, we should grab the code from the URL
 	//Create accessToken with the code.
 	//Then res.redirect to the frontend (youtube homepage)
 
 	//But how do rooms work??
-
-	const resp = await fetch();
+	console.log("my route working")
+	console.log("my code",code)
+	//make api call to gogle to get accessToken and return
+	//const resp = await fetch();
 	//res.redirect()
 }
 
 // Handling login request
 router.get("/login", (req, res, next) => {
 	//res.send({ test: "testing" });
-	var accessToken = getAccessToken();
+	console.log(req.headers.code)
+	var accessToken = getAccessToken(req.headers.code);
 });
 
 router.get("/login2", (req, res, next) => {
@@ -55,6 +63,7 @@ router.get("/JWT", (req, res) => {
 
 function testLogin() {
 	//could make this authenticate Token function
+	
 	return "my JWT token!";
 }
 
