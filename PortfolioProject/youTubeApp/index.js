@@ -16,11 +16,8 @@ const io = new Server(server, {
 
 const loginroute = require("./routes/auth"); //import routing from routes/login
 const youtubeRoutes = require("./routes/youtube")(io);
-//const youtubeRoute = require("./routes/youtube"); //import routing from youtube
 
-let corsOptions = {
-	origin: ["http://localhost:3000"],
-};
+//const youtubeRoute = require("./routes/youtube"); //import routing from youtube
 
 app.use(cors());
 

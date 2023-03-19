@@ -4,6 +4,20 @@ const express = require("express");
 const router = express.Router();
 
 var returnRouter = function (io) {
+
+	io.on("connection", (socket) => {
+		console.log(`User Connected: ${socket.id}`);
+	  
+		socket.on("join_room", (data) => {
+		  socket.join(data);//joins room
+		});
+	  
+		socket.on("send_message", (data) => {
+		  socket.to(data.room).emit("receive_message", data);
+		});
+	});
+
+
 	console.log("test(first call from youtubeRoute)");
 	router.get("/youtube1", (req, res) => {
 		console.log("test2");

@@ -5,6 +5,7 @@ import TodoLogin from "./todo/TodoLogin";
 
 import TodoHomepage from "./todo/TodoHomepage";
 import PrivateRoutes from "./utils/PrivateRoutes";
+import YouTubePrivateRoutes from "./utils/YouTubePrivateRoutes";
 import TaskEdit from "./todo/TaskEdit";
 import AddTask from "./todo/AddTask";
 import TodoRegister from "./todo/TodoRegister";
@@ -25,8 +26,11 @@ function App() {
 					<Route exact path="/Project/To-do-register" element={<TodoRegister />}></Route>
 
 					<Route exact path="/Project/YoutubeApp/Login" element={<Login />}></Route>
-					<Route exact path="/Project/YoutubeApp/Home" element={<YouTubeHomePage />}></Route>
-					<Route exact path="/Project/YoutubeApp/Watch/:code" element={<WatchRoom />}></Route>
+
+					<Route element={<YouTubePrivateRoutes/>}>
+						<Route exact path="/Project/YoutubeApp/Home" element={<YouTubeHomePage />}></Route>
+						<Route exact path="/Project/YoutubeApp/Watch/:code" element={<WatchRoom />}></Route>
+					</Route>
 
 					<Route element={<PrivateRoutes />}>
 						<Route path="/Project/To-do/Dashboard" element={<TodoHomepage />}></Route>
