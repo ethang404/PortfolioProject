@@ -6,6 +6,21 @@ const socket = io.connect("http://localhost:8080");
 //var socket = io.connect();
 
 export default function WatchRoom() {
+
+	useEffect(() => {
+		socket.on("user-played", (data) => {
+			console.log("other user clicked play: ")
+			
+		  setMessageReceived(data.message);
+		});
+	  }, [socket]);
+	function refreshToken(){//call when accessToken expired..if refresh token expired-log out
+
+	}
+	function searchVideos(){
+
+	}
+
 	function sendMessage() {
 		socket.emit();
 	}

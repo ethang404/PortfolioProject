@@ -13,13 +13,13 @@ var returnRouter = function (io) {
 		});
 	  
 		socket.on("playVideo", (data) => {//play event to room
-			socket.to(data.room).emit("play.", data);
+			socket.to(data.room).emit("user-played", data);
 		  });
 		socket.on("pauseVideo", (data) => {//pause event to room
-			socket.to(data.room).emit("pause.", data);
+			socket.to(data.room).emit("user-paused.", data);
 		});
 		socket.on("playVideo", (data) => {//play video(video id) event to room
-			socket.to(data.room).emit("videoId", data);
+			socket.to(data.room).emit("search-videoId", data);
 		});
 	});
 
