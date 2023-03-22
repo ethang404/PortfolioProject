@@ -12,8 +12,14 @@ var returnRouter = function (io) {
 		  socket.join(data);//joins room
 		});
 	  
-		socket.on("send_message", (data) => {
-		  socket.to(data.room).emit("receive_message", data);
+		socket.on("playVideo", (data) => {//play event to room
+			socket.to(data.room).emit("receive_message", data);
+		  });
+		socket.on("pauseVideo", (data) => {//pause event to room
+			socket.to(data.room).emit("receive_message", data);
+		});
+		socket.on("playVideo", (data) => {//play video(video id) event to room
+			socket.to(data.room).emit("receive_message", data);
 		});
 	});
 
