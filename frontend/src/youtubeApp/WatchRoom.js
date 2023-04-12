@@ -1,30 +1,44 @@
+/*global google*/
 import io from "socket.io-client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
 
-const socket = io.connect("http://localhost:8080");
+//const socket = io.connect("http://localhost:8080");
 //var socket = io.connect();
 
-export default function WatchRoom() {
+export default function WatchRoom({ socket }) {
+	const playerRef = useRef();
+	const [videoSearch, setVideoSearch] = useState("");
+	const [searchResponse, setSearchResponse] = useState([]);
+
 	useEffect(() => {
+		socket.emit("join_room", 123); //join a room
 		socket.on("user-played", (data) => {
 			console.log("other user clicked play: ");
-
-			setMessageReceived(data.message);
+			playerRef.current.internalPlayer.playVideo();
+		});
+		socket.on("user-paused", (data) => {
+			console.log("other user clicked pause: ");
+			playerRef.current.internalPlayer.pauseVideo();
+		});
+		socket.on("search - videoId", (data) => {
+			console.log("other user searching video: ");
+			//playerRef.current.internalPlayer.pauseVideo();
 		});
 	}, [socket]);
 	function refreshToken() {
 		//call when accessToken expired..if refresh token expired-log out
 	}
-	function searchVideos() {} //how to access event.target.playVideo(); in useEffect
+	async function searchYoutube() {
+		console.log("search for youtube Id's here to display with react youtube npm");
+		//join room
+		//also need to implement join room feature on this component
+	}
 
 	function sendMessage() {
 		socket.emit();
 	}
-	function emitEvent(event) {
-		console.log("fuck the horse");
-		console.log(event);
-	}
+
 	function changeBorderColor(playerStatus) {
 		//onClick-if playerStatus=1(playing)->emit "pause"--player status 2
 		//onClick-if playerStatus=2(pause)->emit "play"--player status 1
@@ -32,20 +46,6 @@ export default function WatchRoom() {
 		//1 = playing
 		//2 = paused
 		//3 = buffering
-	}
-	function onPlayerStateChange(event) {
-		console.log(event);
-		if (event.data == YouTube.PlayerState.PLAYING) {
-			console.log("playing now...");
-		} else {
-			console.log("not playinhg");
-		}
-	}
-
-	function ready(event) {
-		console.log("testing");
-		console.log(event);
-		event.target.playVideo();
 	}
 
 	return (
@@ -57,6 +57,7 @@ export default function WatchRoom() {
 			</div>
 			<div>
 				<YouTube
+					ref={playerRef}
 					videoId={"di0MtYgeJNE"} // defaults -> ''
 					//id={string} // defaults -> ''
 					//className={string} // defaults -> ''
@@ -65,19 +66,23 @@ export default function WatchRoom() {
 					//title={string} // defaults -> ''
 					//loading={string} // defaults -> undefined
 					//opts={obj} // defaults -> {}
-					//onReady={ready} // defaults -> noop
+					//onReady={(event) => {
+					//console.log(event);
+					//console.log(event.target);
+					//console.log("now playing(by default)");
+					//playerRef.current.internalPlayer.playVideo();
+					//socket.emit("playVideo", { room: 123 });
+					//}} // defaults -> noop
 					onPlay={(event) => {
 						console.log(event);
 						console.log(event.target);
 						console.log("now playing");
-						console.log(YouTube.PlayerState);
 						event.target.playVideo();
-						event.target.pauseVideo();
-						emitEvent(event);
+						socket.emit("playVideo", { room: 123 });
 					}} // defaults -> noop
 					onPause={(event) => {
 						console.log("now pausing", event);
-						console.log(YouTube.PlayerState.BUFFERING);
+						socket.emit("pauseVideo", { room: 123 });
 					}} // defaults -> noop
 					//onEnd={func} // defaults -> noop
 					//onError={func} // defaults -> noop
