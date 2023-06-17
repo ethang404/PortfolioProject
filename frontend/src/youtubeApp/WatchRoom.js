@@ -2,41 +2,73 @@
 import io from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
+import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 //const socket = io.connect("http://localhost:8080");
 //var socket = io.connect();
 
 export default function WatchRoom({ socket }) {
+	const { room } = useParams();
 	const playerRef = useRef();
 	const [videoSearch, setVideoSearch] = useState("");
 	const [searchResponse, setSearchResponse] = useState([]);
+	let [videoCount, setVideoCount] = useState(0);
 
 	useEffect(() => {
-		socket.emit("join_room", 123); //join a room
+		socket.emit("join_room", room); //join a room..have to call again to work at refresh..
 		socket.on("user-played", (data) => {
-			console.log("other user clicked play: ");
+			console.log("other user clicked play..(room): " + room);
 			playerRef.current.internalPlayer.playVideo();
 		});
 		socket.on("user-paused", (data) => {
 			console.log("other user clicked pause: ");
 			playerRef.current.internalPlayer.pauseVideo();
 		});
-		socket.on("search - videoId", (data) => {
+		socket.on("user-searched", (data) => {
 			console.log("other user searching video: ");
+			console.log(data);
 			//playerRef.current.internalPlayer.pauseVideo();
+			setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]);
+		});
+		socket.on("user-skipped", (data) => {
+			console.log("other user skipping video: ");
+			console.log(data);
+			//playerRef.current.internalPlayer.pauseVideo();
+			setVideoCount(data.videoCount++);
 		});
 	}, [socket]);
+
 	function refreshToken() {
 		//call when accessToken expired..if refresh token expired-log out
 	}
 	async function searchYoutube() {
-		console.log("search for youtube Id's here to display with react youtube npm");
-		//join room
-		//also need to implement join room feature on this component
-	}
+		try {
+			let resp = await fetch("http://localhost:8080/yt/searchVideo", {
+				method: "GET",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: "Bearer " + localStorage.getItem("accessToken"),
+					q: videoSearch,
+					//q: "tyler1",
+					//Authorization: "Bearer " + "testyyy",
+				},
+			});
 
-	function sendMessage() {
-		socket.emit();
+			if (resp.ok) {
+				let data = await resp.json();
+				console.log(data);
+				setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]);
+
+				//setSearchResponse(data[0].id.videoId);
+				console.log(data[0].id.videoId);
+				// process the data here
+			} else {
+				console.log("HTTP Error:", resp.status);
+			}
+		} catch (err) {
+			console.log("Fetch Error:", err);
+		}
 	}
 
 	function changeBorderColor(playerStatus) {
@@ -50,15 +82,45 @@ export default function WatchRoom({ socket }) {
 
 	return (
 		<div>
-			<div className="Socket">
-				Input Message Here:
-				<input className="message"></input>
-				<button Onclick={sendMessage}>Click to send</button>
-			</div>
+			<button
+				onClick={() => {
+					console.log(socket.connected);
+					socket.emit("searchVideo", { videoId: searchResponse[0], room: room });
+				}}
+			>
+				emitSearch
+			</button>
+			<h3>You can search for a video in the box below! Give it a go!</h3>
+			<form>
+				<label>Search for Video:</label>
+				<input
+					type="text"
+					required
+					value={videoSearch}
+					onChange={(e) => setVideoSearch(e.target.value)}
+				></input>
+				<button
+					onClick={(event) => {
+						event.preventDefault();
+						searchYoutube();
+					}}
+				>
+					Hehe clicky me
+				</button>
+			</form>
+			<button
+				onClick={() => {
+					setVideoCount(videoCount++);
+					socket.emit("skipVideo", { videoCount, room: room });
+				}}
+			>
+				Skip Ahead
+			</button>
+			<h3>Room Code is: {room}</h3>
 			<div>
 				<YouTube
 					ref={playerRef}
-					videoId={"di0MtYgeJNE"} // defaults -> ''
+					videoId={searchResponse[videoCount]} // defaults -> ''
 					//id={string} // defaults -> ''
 					//className={string} // defaults -> ''
 					//iframeClassName={string} // defaults -> ''
@@ -78,11 +140,11 @@ export default function WatchRoom({ socket }) {
 						console.log(event.target);
 						console.log("now playing");
 						event.target.playVideo();
-						socket.emit("playVideo", { room: 123 });
+						socket.emit("playVideo", { room: room });
 					}} // defaults -> noop
 					onPause={(event) => {
 						console.log("now pausing", event);
-						socket.emit("pauseVideo", { room: 123 });
+						socket.emit("pauseVideo", { room: room });
 					}} // defaults -> noop
 					//onEnd={func} // defaults -> noop
 					//onError={func} // defaults -> noop
@@ -90,32 +152,13 @@ export default function WatchRoom({ socket }) {
 					//THIS IS WHAT I WANT
 					onStateChange={(event) => {
 						console.log("now changing state", event);
+						console.log(searchResponse[videoCount]);
 					}} // defaults -> noop
 					//onPlaybackRateChange={func} // defaults -> noop
 					//onPlaybackQualityChange={func} // defaults -> noop
 				/>
 			</div>
 			This is my Watch room where I embed youtube vid
-			<div>
-				<iframe
-					width="560"
-					height="315"
-					src="https://www.youtube.com/embed/di0MtYgeJNE" //can change end of this url to be another vid
-					title="YouTube video player"
-					frameborder="0"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-					allowfullscreen
-				></iframe>
-				<iframe
-					width="560"
-					height="315"
-					src="https://www.youtube.com/embed/GHEgeul6MyY" //can change end of this url to be another vid
-					title="YouTube video player"
-					frameborder="0"
-					allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-					allowfullscreen
-				></iframe>
-			</div>
 		</div>
 	);
 }

@@ -29,6 +29,7 @@ function App() {
 					<Route exact path="/Project/To-do-register" element={<TodoRegister />}></Route>
 
 					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
+					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
 
 					<Route element={<YouTubePrivateRoutes />}>
 						<Route
@@ -38,7 +39,7 @@ function App() {
 						></Route>
 						<Route
 							exact
-							path="/Project/YoutubeApp/Watch/:code"
+							path="/Project/YoutubeApp/Watch/:room"
 							element={<WatchRoom socket={socket} />}
 						></Route>
 					</Route>

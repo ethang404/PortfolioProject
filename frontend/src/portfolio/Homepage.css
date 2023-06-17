@@ -1,118 +1,175 @@
-.main{
-	background-image: url(./images_downloads/ales-nesetril-Im7lZjxeLhg-unsplash.jpg);
-	background-size: cover;
-	background-position: center;
-	width: 100%;
-	height: 100vh;
-}
-.About{
-	display: flex;
-	background-image: url(./images_downloads/isai-ramos-_3SFFsWqCVg-unsplash.jpg);
-	background-size: fill;
-	opacity: 0.9;
-	border-radius: 20%;
-	align-content: center;
-	justify-content: space-around;
-	margin: 70px 300px;
-}
-.About-Me{
-	color: white;
-	line-height: 2rem;
-	padding-left: 30px;
-	padding-right: 30px;
-	padding-top: 30px;
-	padding-bottom: 30px;
+body {
+	background-color: #222;
+	color: #fff;
 }
 
-.Pic{
-	
-	padding-left: 30px;
-	padding-right: 30px;
-	padding-top: 30px;
-	padding-bottom: 30px;
-	border-radius: 25%;
-	width: 200px;
+.main {
+	max-width: 800px;
+	margin: auto;
+}
+
+.main-header {
+	text-align: center;
+	font-size: 36px;
+	margin-top: 50px;
+}
+
+.second-header {
+	text-align: center;
+	font-size: 24px;
+	margin-top: 20px;
+	margin-bottom: 50px;
+}
+
+.container {
+	display: flex;
+	justify-content: space-evenly;
+	width: 50%;
+	margin: auto;
+	margin-top: 20px;
+}
+
+.container div {
+	width: 25%;
+}
+
+.container img {
+	max-width: 100%;
+	height: auto;
+}
+
+.about-me {
+	display: flex;
+	flex-direction: row;
+	margin-bottom: 50px;
+}
+
+.Pic {
 	height: 200px;
-}
-span{
-	color: purple;
+	width: 200px;
+	margin-right: 20px;
+	border-radius: 50%;
+	object-fit: cover;
 }
 
-.Skills-list{
-    margin-top: 2rem;
-    margin-bottom: 5rem;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-gap: 2.5rem;
-    grid-template-areas: 'skill1 skill2 skill3 skill4';
-    height: auto;
-    text-align: center;
-    place-items: center;
-}
-.Skills-title{
+.about-me-info {
 	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.skill1{
-	color:chocolate;
-}
-.GithubPic{
-	width: 60px;
-	height: 60px;
-}
-.FrontendPic{
-	width: 60px;
-	height: 60px;
-}
-.BackendPic{
-	width: 60px;
-	height: 60px;
-}
-.TeamworkPic{
-	width: 60px;
-	height: 60px;
-}
-.skill2{
-	color:chocolate;
-}
-.skill3{
-	color:chocolate;
-}
-.skill4{
-	color:chocolate;
+	flex-direction: column;
 }
 
-.Projects{
-	background-image: url(./images_downloads/kelly-sikkema-tk9RQCq5eQo-unsplash.jpg);
-	background-size: cover;
-	background-position: cover;
+.about-me-info h4 {
+	margin: 0;
+	margin-bottom: 10px;
 }
-.Projects-inner{
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	column-gap: 40px;
+
+.about-me-info p {
+	margin: 0;
+	margin-bottom: 10px;
+}
+
+.about-me-info a {
+	color: #fff;
+}
+
+.projects-container {
+	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-around;
-	align-items: center;
-	margin: 0 auto;
-	padding: 50px 30px;
-	max-width: 1200px;
 }
-.Project1 a{
-	background-color:#f9004d;
+
+.project {
+	margin-bottom: 20px;
 	color: white;
-	text-decoration: none;
-	border: 2px solid transparent;
-	font-weight: bold;
-	
-	border-radius: 30px;
+	padding: 20px;
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
-.Project2 a{
-	background-color:#f9004d;
+
+.skills-container ul {
+	list-style-type: none;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	justify-content: space-around;
+	text-align: center;
+}
+
+.skills-container img {
+	width: 70%;
+	max-width: 150px;
+	margin: 10px;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	max-width: 400px;
+	margin: 30px auto;
+}
+
+label {
+	font-size: 1.2rem;
+	margin-bottom: 0.5rem;
+}
+
+input,
+textarea {
+	padding: 0.5rem;
+	font-size: 1rem;
+	border-radius: 5px;
+	border: none;
+	margin-bottom: 1rem;
+}
+
+textarea {
+	height: 150px;
+}
+
+.contact-form button {
+	background-color: #fca311;
+	border: none;
+	border-radius: 5px;
 	color: white;
-	text-decoration: none;
-	border: 2px solid transparent;
-	font-weight: bold;
-	
-	border-radius: 30px;
+	cursor: pointer;
+	padding: 10px;
+	transition: background-color 0.2s ease-in-out;
+}
+
+.contact-form button:hover {
+	background-color: #fcbf49;
+}
+
+@media screen and (max-width: 768px) {
+	.project {
+		flex: 0 1 calc(50% - 10px);
+	}
+}
+
+@media screen and (max-width: 480px) {
+	.project {
+		flex: 0 1 100%;
+	}
+}
+
+@media (max-width: 768px) {
+	.about-me {
+		flex-direction: column;
+	}
+
+	.Pic {
+		margin: auto;
+	}
+
+	.about-me-info {
+		margin-top: 20px;
+	}
+
+	.projects-container {
+		flex-direction: column;
+	}
+
+	.project {
+		width: 100%;
+		margin-bottom: 20px;
+	}
 }
