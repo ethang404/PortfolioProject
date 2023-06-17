@@ -14,15 +14,12 @@ export default function Login() {
 
 	const [user, setUser] = useState({});
 	const [token, setToken] = useState("");
-	const navigate = useNavigate();
-
-	const [user, setUser] = useState({});
-	const [token, setToken] = useState("");
 
 	function handleLogin(response) {
 		console.log("call back response", response);
 		console.log("encoded JWT", response.credential);
 		var access_token = response.credential;
+	}
 	function handleLogin(response) {
 		console.log("call back response", response);
 		console.log("encoded JWT", response.credential);
