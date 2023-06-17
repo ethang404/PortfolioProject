@@ -1,3 +1,4 @@
+/*global google*/
 import "./App.css";
 import HomePage from "./portfolio/HomePage";
 import Projects from "./portfolio/Projects";
@@ -13,9 +14,11 @@ import TodoRegister from "./todo/TodoRegister";
 import WatchRoom from "./youtubeApp/WatchRoom";
 import Login from "./youtubeApp/Login";
 import YouTubeHomePage from "./youtubeApp/Homepage";
+import io from "socket.io-client";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
+const socket = io.connect("http://localhost:8080");
 function App() {
 	return (
 		<div className="App">
@@ -25,6 +28,7 @@ function App() {
 					<Route exact path="/Project/To-do-login" element={<TodoLogin />}></Route>
 					<Route exact path="/Project/To-do-register" element={<TodoRegister />}></Route>
 
+					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
 					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
 
 					<Route element={<YouTubePrivateRoutes />}>

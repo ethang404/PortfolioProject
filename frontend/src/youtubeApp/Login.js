@@ -1,6 +1,10 @@
+/* global google*/
+
 import { useParams, useNavigate, Routes, Route, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
+import jwt_decode from "jwt-decode";
 import jwt_decode from "jwt-decode";
 
 import YouTubeHomePage from "./Homepage";
@@ -10,12 +14,24 @@ export default function Login() {
 
 	const [user, setUser] = useState({});
 	const [token, setToken] = useState("");
+	const navigate = useNavigate();
+
+	const [user, setUser] = useState({});
+	const [token, setToken] = useState("");
 
 	function handleLogin(response) {
 		console.log("call back response", response);
 		console.log("encoded JWT", response.credential);
 		var access_token = response.credential;
+	function handleLogin(response) {
+		console.log("call back response", response);
+		console.log("encoded JWT", response.credential);
+		var access_token = response.credential;
 
+		setToken(response.credential);
+		var userObj = jwt_decode(response.credential);
+		console.log(userObj);
+		setUser(userObj);
 		setToken(response.credential);
 		var userObj = jwt_decode(response.credential);
 		console.log(userObj);

@@ -1,10 +1,11 @@
+/*global google*/
 import io from "socket.io-client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNavigate, useParams } from "react-router-dom";
 
-const socket = io.connect("http://localhost:8080");
+//const socket = io.connect("http://localhost:8080");
 //var socket = io.connect();
 
 export default function WatchRoom({ socket }) {
@@ -78,20 +79,6 @@ export default function WatchRoom({ socket }) {
 		//2 = paused
 		//3 = buffering
 	}
-	function onPlayerStateChange(event) {
-		console.log(event);
-		if (event.data == YouTube.PlayerState.PLAYING) {
-			console.log("playing now...");
-		} else {
-			console.log("not playinhg");
-		}
-	}
-
-	function ready(event) {
-		console.log("testing");
-		console.log(event);
-		event.target.playVideo();
-	}
 
 	return (
 		<div>
@@ -141,12 +128,17 @@ export default function WatchRoom({ socket }) {
 					//title={string} // defaults -> ''
 					//loading={string} // defaults -> undefined
 					//opts={obj} // defaults -> {}
-					//onReady={ready} // defaults -> noop
+					//onReady={(event) => {
+					//console.log(event);
+					//console.log(event.target);
+					//console.log("now playing(by default)");
+					//playerRef.current.internalPlayer.playVideo();
+					//socket.emit("playVideo", { room: 123 });
+					//}} // defaults -> noop
 					onPlay={(event) => {
 						console.log(event);
 						console.log(event.target);
 						console.log("now playing");
-						console.log(YouTube.PlayerState);
 						event.target.playVideo();
 						socket.emit("playVideo", { room: room });
 					}} // defaults -> noop

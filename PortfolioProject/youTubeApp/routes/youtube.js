@@ -58,7 +58,10 @@ var returnRouter = function (io) {
 	io.on("connection", (socket) => {
 		console.log(`User Connected: ${socket.id}`);
 
+
 		socket.on("join_room", (data) => {
+			console.log("Joining room: " + data);
+			socket.join(data); //joins room
 			console.log("Joining room: " + data);
 			socket.join(data); //joins room
 		});
@@ -68,6 +71,13 @@ var returnRouter = function (io) {
 			console.log("playVideo-room code is " + data.room);
 			socket.to(data.room).emit("user-played");
 		});
+	});
+
+	console.log("test(first call from youtubeRoute)");
+	router.get("/youtube1", (req, res) => {
+		console.log("test2");
+		io.on("connection", (socket) => {
+			console.log(`User Connected: ${socket.id}`);
 		socket.on("pauseVideo", (data) => {
 			//pause event to room
 			console.log("pauseVideo-room code is " + data.room);
