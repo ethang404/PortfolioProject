@@ -9,6 +9,8 @@ import DateTimePicker from "react-datetime-picker";
 
 import Navbar from "../Navbar";
 
+import "./AddTask.css";
+
 export default function AddTask() {
 	let navigate = useNavigate();
 	let [userID, setUser] = useState(() =>

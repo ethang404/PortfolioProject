@@ -2,21 +2,26 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	background-color: #d96f4c;
 }
-nav ul li{
-	list-style-type: none;
-	display: inline-block;
-	padding: 10px  25px;
-}
-
 .Nav-elements a {
-	background-color:#f9004d;
 	color: white;
+	font-size: 30px;
 	text-decoration: none;
-	border: 2px solid transparent;
-	font-weight: bold;
+}
+nav ul li {
+	display: inline-block;
 	padding: 10px 25px;
-	border-radius: 30px;
-
-	box-shadow: 5px 3px 0px 0px #98FF98;
+}
+nav ul li a::after {
+	width: 0;
+	height: 3px;
+	background: #ff004f;
+	position: absolute;
+	left: 0;
+	bottom: -6px;
+	transition: 0.5s;
+}
+nav ul li a::hover::after {
+	width: 100%;
 }

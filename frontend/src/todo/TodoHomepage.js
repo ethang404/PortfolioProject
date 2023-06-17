@@ -113,55 +113,60 @@ export default function TodoHomepage() {
 	return (
 		<div className="Parent">
 			<h1 className="Title">This is my todo Homepage! Hope you enjoy!</h1>
-			<Button className="LogoutButton" onClick={handleLogout}>
-				Logout Here
-			</Button>
-			<Button className="AddTask" onClick={() => navigate("/Project/To-do/AddTask/")}>
-				Add a Task
-			</Button>
+			<div className="ButtonContainer">
+				<Button className="LogoutButton" onClick={handleLogout}>
+					Logout Here
+				</Button>
+				<Button className="AddTask" onClick={() => navigate("/Project/To-do/AddTask/")}>
+					Add a Task
+				</Button>
+			</div>
 			<div className="Notes">
-				<table className="Table">
-					<thead>
-						<tr>
-							<th>taskName</th>
-							<th>info</th>
-							<th>time created</th>
-							<th>time due</th>
-							<th>is Complete</th>
-							<th>Toggle Complete</th>
-							<th>Delete Task </th>
-						</tr>
-					</thead>
-					<tbody>
-						{notes.map((note) => (
-							<tr
-								key={note.id}
-								onClick={() => {
-									navigate("/Project/To-do/Task/" + note.id);
-								}}
-							>
-								<td data-label="taskName">{note.task_name}</td>
-								<td data-label="info">{note.task_info}</td>
-								<td data-label="time created">
-									{note.task_created.replace("T", " | ").slice(0, 19)}
-								</td>
-								<td data-label="time due">{note.task_due.replace("T", " | ").slice(0, 19)}</td>
-								<td data-label="is Complete">{JSON.stringify(note.isCompleted)}</td>
-								<td data-label="Toggle Complete">
-									<Checkbox
-										checked={note.isCompleted}
-										onClick={(event) => updateComplete(event, note)}
-									/>
-								</td>
-								<td data-label="Delete Task">
-									<Button className="trash" onClick={(event) => deleteTask(event, note.id)}>
-										Delete Task
-									</Button>
-								</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+				<div className="Header">
+					<div className="HeaderCell">Task Name</div>
+					<div className="HeaderCell">Info</div>
+					<div className="HeaderCell">Time Created</div>
+					<div className="HeaderCell">Time Due</div>
+					<div className="HeaderCell">Is Complete</div>
+					<div className="HeaderCell">Toggle Complete</div>
+					<div className="HeaderCell">Delete Task</div>
+				</div>
+				{notes.map((note) => (
+					<div
+						className="Note"
+						key={note.id}
+						onClick={() => {
+							navigate("/Project/To-do/Task/" + note.id);
+						}}
+					>
+						<div className="Cell" data-label="Task Name">
+							{note.task_name}
+						</div>
+						<div className="Cell" data-label="Info">
+							{note.task_info}
+						</div>
+						<div className="Cell" data-label="Time Created">
+							{note.task_created.replace("T", " | ").slice(0, 19)}
+						</div>
+						<div className="Cell" data-label="Time Due">
+							{note.task_due.replace("T", " | ").slice(0, 19)}
+						</div>
+						<div className="Cell" data-label="Is Complete">
+							{JSON.stringify(note.isCompleted)}
+						</div>
+						<div className="Cell" data-label="Toggle Complete">
+							<Checkbox
+								checked={note.isCompleted}
+								onClick={(event) => updateComplete(event, note)}
+							/>
+						</div>
+						<div className="Cell" data-label="Delete Task">
+							<Button className="Trash" onClick={(event) => deleteTask(event, note.id)}>
+								Delete Task
+							</Button>
+						</div>
+					</div>
+				))}
 			</div>
 		</div>
 	);

@@ -1,0 +1,61 @@
+.RegisterPage {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: 50px;
+	font-family: "Roboto", sans-serif;
+	background-color: #f2f2f2; /* light gray background color */
+	padding: 50px; /* add some padding for spacing */
+}
+
+h2 {
+	font-size: 28px;
+	font-weight: bold;
+	margin-bottom: 20px;
+}
+
+form {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	max-width: 500px;
+}
+
+label {
+	display: block;
+	margin-bottom: 20px;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+input[type="text"] {
+	width: 100%;
+	padding: 10px;
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	font-size: 16px;
+	margin-top: 5px;
+	margin-bottom: 20px;
+}
+
+input[type="submit"] {
+	background-color: #008cba; /* blue submit button */
+	color: #fff;
+	padding: 10px 20px;
+	border: none;
+	border-radius: 5px;
+	font-size: 16px;
+	cursor: pointer;
+}
+
+input[type="submit"]:hover {
+	background-color: #00698c; /* darker blue on hover */
+}
+
+.Checkbox {
+	margin-bottom: 20px;
+}
+
+.DateTimePicker {
+	margin-bottom: 20px;
+}

@@ -1,70 +1,79 @@
 const express = require("express");
-const { google } = require("googleapis");
+require("dotenv").config();
+var passport = require("passport");
+const cookieParser = require("cookie-parser");
+const axios = require("axios");
+//const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 
 // Creating express Router
 const router = express.Router();
-const cors = require('cors');
-router.use(cors({
-    origin: ['https://www.section.io', 'https://www.google.com/']
-}));
 
+router.get("/success", (req, res) => {
+	console.log("access: ", req.user.accessToken);
+	// Save accessToken in session
+	req.session.accessToken = req.user.accessToken;
+	console.log("session object:", req.session.accessToken);
 
-/**
- * To use OAuth2 authentication, we need access to a CLIENT_ID, CLIENT_SECRET, AND REDIRECT_URI
- * from the client_secret.json file. To get these credentials for your application, visit
- * https://console.cloud.google.com/apis/credentials.
- */
-const oauth2Client = new google.auth.OAuth2(
-	process.env.client_id,
-	process.env.client_secret,
-	process.env.redirect_uri
+	console.log("myVal", req.isAuthenticated());
+	res.cookie("accessToken", req.user.accessToken, { maxAge: 24 * 60 * 60 * 1000 }); // 1 day
+	console.log("Cookie set!");
+
+	res.redirect(
+		"http://localhost:3000/Project/YoutubeApp/Home?accessToken=" + req.session.accessToken
+	);
+});
+router.get("/error", (req, res) => res.send("error logging in"));
+
+router.get(
+	"/google",
+	passport.authenticate("google", { scope: ["profile", "https://www.googleapis.com/auth/youtube"] })
+); //this navigates to the consent screen to
+//get code from user profile
+
+//Call passport.authenticate again(now with code after consent screen) and obtain profile data(and accessToken)
+router.get(
+	"/google/callback",
+	passport.authenticate("google", { failureRedirect: "/auth/error" }),
+	function (req, res) {
+		//console.log(req.user);
+		//console.log("MY TOKEN: ", req.user.accessToken);
+		//console.log("accessing accessToken in callback!...going to redirect to forntend now");
+		//const accessToken = req.user.accessToken;
+		//res.cookie("accessToken", accessToken);
+		// This function is called after the user grants permission and the authorization code is exchanged for an access token
+		res.redirect("http://localhost:8080/auth/success");
+		//res.redirect("http://localhost:3000/Project/YoutubeApp/Home");
+	}
 );
 
-// Generate a url that asks permissions for the Drive activity scope
-const authorizationUrl = oauth2Client.generateAuthUrl({
-	// 'online' (default) or 'offline' (gets refresh_token)
-	access_type: "offline",
+router.get("/", (req, res) => {
+	console.log("testy22: ", req.session.accessToken);
+	console.log(req.isAuthenticated());
+	console.log("test2");
+	console.log(process.env.GOOGLE_CLIENT_ID);
 
-	scope: process.env.scope,
-	// Enable incremental authorization. Recommended as a best practice.
-	include_granted_scopes: true,
-
-	response_type: "code",
+	res.send("This is the youtube HOME request");
 });
 
-async function getAccessToken(code) {
-	//google should redirect to here, we should grab the code from the URL
-	//Create accessToken with the code.
-	//Then res.redirect to the frontend (youtube homepage)
-
-	//But how do rooms work??
-	console.log("my route working")
-	console.log("my code",code)
-	//make api call to gogle to get accessToken and return
-	//const resp = await fetch();
-	//res.redirect()
-}
-
-// Handling login request
-router.get("/login", (req, res, next) => {
-	//res.send({ test: "testing" });
-	console.log(req.headers.code)
-	var accessToken = getAccessToken(req.headers.code);
+router.get("/validToken", async (req, res) => {
+	const accessToken = req.headers.authorization.split(" ")[1];
+	console.log("my accessToken: ", accessToken);
+	try {
+		let response = await axios.get(
+			"https://oauth2.googleapis.com/tokeninfo?access_token=" + accessToken
+		);
+		if (response.data.error) {
+			console.log("aww bad token");
+			res.status(403).send("Error: invalidToken");
+		} else {
+			console.log("yay! good token");
+			res.status(200).send("Success: token is valid");
+		}
+	} catch (error) {
+		console.log("something went wrong: ", error.message);
+		res.send(error.message);
+		//res.status(500).send("Something went wrong", error.message);
+	}
 });
-
-router.get("/login2", (req, res, next) => {
-	res.send("This is the login request number 2");
-});
-
-router.get("/JWT", (req, res) => {
-	temp = testLogin();
-	res.send(temp);
-});
-
-function testLogin() {
-	//could make this authenticate Token function
-	
-	return "my JWT token!";
-}
 
 module.exports = router;

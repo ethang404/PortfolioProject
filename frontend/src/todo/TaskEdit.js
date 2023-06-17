@@ -4,6 +4,8 @@ import jwt_decode from "jwt-decode";
 import Checkbox from "@mui/material/Checkbox";
 import DateTimePicker from "react-datetime-picker";
 
+import "./TaskEdit.css";
+
 export default function TaskEdit() {
 	const { id } = useParams();
 	//Send to this component a object form homepage->The task you clicked on VIA props. To get old data...Should fix required field issue?
@@ -95,11 +97,11 @@ export default function TaskEdit() {
 	}
 
 	return (
-		<div>
-			<h1>Task Edit Page!</h1>
-			<div className="Login">
-				<form onSubmit={handleSubmit}>
-					<label>
+		<div className="task-edit-page">
+			<h1>Edit Task</h1>
+			<div className="task-edit-form-container">
+				<form onSubmit={handleSubmit} className="task-edit-form">
+					<label className="task-edit-form-label">
 						Task Name:
 						<input
 							type="text"
@@ -107,15 +109,17 @@ export default function TaskEdit() {
 							value={taskDetails.task_name}
 							onChange={onChangeHandler}
 							required
+							className="task-edit-form-input"
 						/>
 					</label>
-					<label>
+					<label className="task-edit-form-label">
 						Task Info:
 						<input
 							type="text"
 							name="task_info"
 							value={taskDetails.task_info}
 							onChange={onChangeHandler}
+							className="task-edit-form-input"
 						/>
 					</label>
 					<Checkbox
@@ -123,17 +127,18 @@ export default function TaskEdit() {
 						onClick={(event) => {
 							setTaskDetails({ ...taskDetails, isCompleted: event.target.checked });
 						}}
+						className="task-edit-form-checkbox"
 					/>
-
 					<DateTimePicker
 						onChange={(date) => setTaskDetails({ ...taskDetails, ["task_due"]: date })}
 						value={taskDetails.task_due}
+						className="task-edit-form-datetimepicker"
 					/>
-					<input type="submit" value="TaskEdit" />
+					<input type="submit" value="Save" className="task-edit-form-submit" />
 				</form>
-				<div>
-					<h4>Below is my task Details: </h4>
-					{JSON.stringify(taskDetails)}
+				<div className="task-details-preview">
+					<h4>Task Details:</h4>
+					<pre className="task-details-preview-json">{JSON.stringify(taskDetails, null, 2)}</pre>
 				</div>
 			</div>
 		</div>

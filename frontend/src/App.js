@@ -25,11 +25,19 @@ function App() {
 					<Route exact path="/Project/To-do-login" element={<TodoLogin />}></Route>
 					<Route exact path="/Project/To-do-register" element={<TodoRegister />}></Route>
 
-					<Route exact path="/Project/YoutubeApp/Login" element={<Login />}></Route>
+					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
 
-					<Route element={<YouTubePrivateRoutes/>}>
-						<Route exact path="/Project/YoutubeApp/Home" element={<YouTubeHomePage />}></Route>
-						<Route exact path="/Project/YoutubeApp/Watch/:code" element={<WatchRoom />}></Route>
+					<Route element={<YouTubePrivateRoutes />}>
+						<Route
+							exact
+							path="/Project/YoutubeApp/Home"
+							element={<YouTubeHomePage socket={socket} />}
+						></Route>
+						<Route
+							exact
+							path="/Project/YoutubeApp/Watch/:room"
+							element={<WatchRoom socket={socket} />}
+						></Route>
 					</Route>
 
 					<Route element={<PrivateRoutes />}>
