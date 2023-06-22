@@ -50,6 +50,7 @@ async function test(req) {
 
 router.get("/searchVideo", verifyToken, async (req, res) => {
 	const searchRes = await test(req);
+	console.log("returning vals...", searchRes[0].id);
 	res.send(searchRes);
 	//const accessToken = req.headers.authorization.split(" ")[1];
 });
@@ -59,10 +60,11 @@ var returnRouter = function (io) {
 		console.log(`User Connected: ${socket.id}`);
 
 		socket.on("join_room", (data) => {
+			console.log("----------------------------------");
 			console.log("Joining room: " + data);
 			socket.join(data); //joins room
-			console.log("Joining room: " + data);
-			socket.join(data); //joins room
+			//console.log("Joining room: " + data);
+			//socket.join(data); //joins room
 		});
 
 		socket.on("playVideo", (data) => {
@@ -70,29 +72,22 @@ var returnRouter = function (io) {
 			console.log("playVideo-room code is " + data.room);
 			socket.to(data.room).emit("user-played");
 		});
-	});
 
-	console.log("test(first call from youtubeRoute)");
-	router.get("/youtube1", (req, res) => {
-		console.log("test2");
-		io.on("connection", (socket) => {
-			console.log(`User Connected: ${socket.id}`);
-			socket.on("pauseVideo", (data) => {
-				//pause event to room
-				console.log("pauseVideo-room code is " + data.room);
-				socket.to(data.room).emit("user-paused");
-			});
-			socket.on("searchVideo", (data) => {
-				console.log("my-Data: ", data.videoId);
-				console.log("my-room: ", data.room);
-				//play video(video id) event to room
-				socket.to(data.room).emit("user-searched", data);
-			});
-			socket.on("skipVideo", (data) => {
-				console.log("my-room: ", data);
-				//play video(video id) event to room
-				socket.to(data.room).emit("user-skipped", data);
-			});
+		socket.on("pauseVideo", (data) => {
+			//pause event to room
+			console.log("pauseVideo-room code is " + data.room);
+			socket.to(data.room).emit("user-paused");
+		});
+		socket.on("searchVideo", (data) => {
+			console.log("my-Data(videoId): ", data.videoId);
+			console.log("my-room: ", data.room);
+			//play video(video id) event to room
+			socket.to(data.room).emit("user-searched", data);
+		});
+		socket.on("skipVideo", (data) => {
+			console.log("my-room: ", data);
+			//play video(video id) event to room
+			socket.to(data.room).emit("user-skipped", data);
 		});
 	});
 
