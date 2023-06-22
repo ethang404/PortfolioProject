@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+/*import { atom, selector } from "recoil";
 
 // Create your atom here
 
@@ -6,3 +6,4 @@ export const videoWatchList = atom({
 	key: "videoWatchList",
 	default: [],
 });
+*/
