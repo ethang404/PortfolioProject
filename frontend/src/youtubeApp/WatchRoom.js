@@ -3,7 +3,9 @@ import io from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
 import { useNavigate, useParams } from "react-router-dom";
-import { useNavigate, useParams } from "react-router-dom";
+
+//import videoWatchList from state management file recoilStates.js
+//import { videoWatchList } from "../recoilStates";
 
 //const socket = io.connect("http://localhost:8080");
 //var socket = io.connect();
@@ -14,9 +16,29 @@ export default function WatchRoom({ socket }) {
 	const [videoSearch, setVideoSearch] = useState("");
 	const [searchResponse, setSearchResponse] = useState([]);
 	let [videoCount, setVideoCount] = useState(0);
+	//const [watchList, setWachList] = useRecoilState(videoWatchList);
+
+	//const setWachList = useSetRecoilState(videoWatchList);
+
+	//PLAN:
+	//When I search video, if ok: I will update my watchList with new video and then emit "searchVideo" and pass videoId like before
+	//on event "user-searched" I will add videoId to watchList(Note: this event only occurs on other's client side. Not main since its socket ev)
+
+	//on room join, I will pass current watchList value(to handle case where a user joins later)
+
+	//on video skip I will do it like before and increment videoCount, but I will do so on the watchList now
+
+	//when watchlist[videoCount] == len(watchList) then clear watchList
+	//how to get lenth of watchList?
+	//Where to do this check? -do before any operation?
 
 	useEffect(() => {
+		// Reads the recoil value
+		//const watchList = useRecoilValue(videoWatchList);
+		//socket.emit("join_room", {room:room,watchList:watchList});
+
 		socket.emit("join_room", room); //join a room..have to call again to work at refresh..
+		//I could also send the current video list here I guess?
 		socket.on("user-played", (data) => {
 			console.log("other user clicked play..(room): " + room);
 			playerRef.current.internalPlayer.playVideo();
@@ -28,8 +50,9 @@ export default function WatchRoom({ socket }) {
 		socket.on("user-searched", (data) => {
 			console.log("other user searching video: ");
 			console.log(data);
+			console.log(data.videoId);
 			//playerRef.current.internalPlayer.pauseVideo();
-			setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]);
+			setSearchResponse((oldArray) => [...oldArray, data.videoId]);
 		});
 		socket.on("user-skipped", (data) => {
 			console.log("other user skipping video: ");
@@ -42,6 +65,16 @@ export default function WatchRoom({ socket }) {
 	function refreshToken() {
 		//call when accessToken expired..if refresh token expired-log out
 	}
+	function addVideo(videoId) {
+		/*setWatchList((oldWatchList) => [
+			...oldWatchList,
+			{
+				id: Math.floor(Math.random() * 100),//get random int 1-100
+				text: videoId,
+			},
+		]);*/
+	}
+
 	async function searchYoutube() {
 		try {
 			let resp = await fetch("http://localhost:8080/yt/searchVideo", {
@@ -57,8 +90,12 @@ export default function WatchRoom({ socket }) {
 
 			if (resp.ok) {
 				let data = await resp.json();
+				console.log("recieved value from search result: ");
 				console.log(data);
 				setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]);
+				//emit here to update other user if search result good:
+
+				socket.emit("searchVideo", { videoId: data[0].id.videoId, room: room });
 
 				//setSearchResponse(data[0].id.videoId);
 				console.log(data[0].id.videoId);
@@ -85,7 +122,7 @@ export default function WatchRoom({ socket }) {
 			<button
 				onClick={() => {
 					console.log(socket.connected);
-					socket.emit("searchVideo", { videoId: searchResponse[0], room: room });
+					socket.emit("searchVideo", { videoId: videoSearch, room: room });
 				}}
 			>
 				emitSearch
@@ -105,7 +142,7 @@ export default function WatchRoom({ socket }) {
 						searchYoutube();
 					}}
 				>
-					Hehe clicky me
+					Hehe clicky me to search!
 				</button>
 			</form>
 			<button
@@ -117,6 +154,7 @@ export default function WatchRoom({ socket }) {
 				Skip Ahead
 			</button>
 			<h3>Room Code is: {room}</h3>
+			<h3>Current videoId is: {searchResponse[0]}</h3>
 			<div>
 				<YouTube
 					ref={playerRef}
