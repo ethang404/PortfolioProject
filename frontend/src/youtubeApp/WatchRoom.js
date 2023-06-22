@@ -5,7 +5,8 @@ import YouTube, { YouTubeProps } from "react-youtube";
 import { useNavigate, useParams } from "react-router-dom";
 
 //import videoWatchList from state management file recoilStates.js
-//import { videoWatchList } from "../recoilStates";
+import { videoWatchList } from "../recoilStates";
+import { useRecoilState } from "recoil";
 
 //const socket = io.connect("http://localhost:8080");
 //var socket = io.connect();
@@ -16,7 +17,7 @@ export default function WatchRoom({ socket }) {
 	const [videoSearch, setVideoSearch] = useState("");
 	const [searchResponse, setSearchResponse] = useState([]);
 	let [videoCount, setVideoCount] = useState(0);
-	//const [watchList, setWachList] = useRecoilState(videoWatchList);
+	const [watchList, setWatchList] = useRecoilState(videoWatchList);
 
 	//const setWachList = useSetRecoilState(videoWatchList);
 
@@ -31,6 +32,9 @@ export default function WatchRoom({ socket }) {
 	//when watchlist[videoCount] == len(watchList) then clear watchList
 	//how to get lenth of watchList?
 	//Where to do this check? -do before any operation?
+	useEffect(() => {
+		console.log(watchList);
+	}, [watchList]);
 
 	useEffect(() => {
 		// Reads the recoil value
@@ -51,6 +55,7 @@ export default function WatchRoom({ socket }) {
 			console.log("other user searching video: ");
 			console.log(data);
 			console.log(data.videoId);
+			addVideo(data.videoId);
 			//playerRef.current.internalPlayer.pauseVideo();
 			setSearchResponse((oldArray) => [...oldArray, data.videoId]);
 		});
@@ -66,13 +71,14 @@ export default function WatchRoom({ socket }) {
 		//call when accessToken expired..if refresh token expired-log out
 	}
 	function addVideo(videoId) {
-		/*setWatchList((oldWatchList) => [
+		setWatchList((oldWatchList) => [
 			...oldWatchList,
 			{
-				id: Math.floor(Math.random() * 100),//get random int 1-100
+				id: Math.floor(Math.random() * 100), //get random int 1-100
 				text: videoId,
 			},
-		]);*/
+		]);
+		console.log("new WatchList: ", watchList);
 	}
 
 	async function searchYoutube() {
@@ -92,6 +98,8 @@ export default function WatchRoom({ socket }) {
 				let data = await resp.json();
 				console.log("recieved value from search result: ");
 				console.log(data);
+				addVideo(data[0].id.videoId); //add videoId to watchList
+
 				setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]);
 				//emit here to update other user if search result good:
 
@@ -99,6 +107,7 @@ export default function WatchRoom({ socket }) {
 
 				//setSearchResponse(data[0].id.videoId);
 				console.log(data[0].id.videoId);
+
 				// process the data here
 			} else {
 				console.log("HTTP Error:", resp.status);
@@ -154,10 +163,9 @@ export default function WatchRoom({ socket }) {
 				Skip Ahead
 			</button>
 			<h3>Room Code is: {room}</h3>
-			<h3>Current videoId is: {searchResponse[0]}</h3>
 			<div>
 				<YouTube
-					ref={playerRef}
+					ref={playerRef} //change below back to searchResponse if fails
 					videoId={searchResponse[videoCount]} // defaults -> ''
 					//id={string} // defaults -> ''
 					//className={string} // defaults -> ''
