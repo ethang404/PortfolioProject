@@ -17,6 +17,11 @@ router.get("/success", (req, res) => {
 	console.log("myVal", req.isAuthenticated());
 	res.cookie("accessToken", req.user.accessToken, { maxAge: 24 * 60 * 60 * 1000 }); // 1 day
 	console.log("Cookie set!");
+	console.log(req.cookies.accessToken);
+
+	console.log("saving refreshToken.. ");
+	console.log(req.user);
+	res.cookie("refreshToken", req.user.refreshToken, { maxAge: 24 * 60 * 60 * 1000 }); // 1 day
 
 	res.redirect(
 		"http://localhost:3000/Project/YoutubeApp/Home?accessToken=" + req.session.accessToken
@@ -26,7 +31,11 @@ router.get("/error", (req, res) => res.send("error logging in"));
 
 router.get(
 	"/google",
-	passport.authenticate("google", { scope: ["profile", "https://www.googleapis.com/auth/youtube"] })
+	passport.authenticate("google", {
+		scope: ["profile", "https://www.googleapis.com/auth/youtube"],
+		accessType: "offline",
+		approvalPrompt: "force",
+	})
 ); //this navigates to the consent screen to
 //get code from user profile
 

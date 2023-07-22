@@ -24,6 +24,23 @@ export default function Homepage({ socket }) {
 		}
 	}
 
+	async function temp() {
+		try {
+			const response = await fetch("http://localhost:8080/yt/testingURL", {
+				credentials: "include",
+			});
+			if (!response.ok) {
+				throw new Error("Request failed with status: " + response.status);
+			}
+			const data = await response.json();
+			console.log(data);
+			// Process the data or update the state with the received data
+		} catch (error) {
+			console.error(error);
+			// Handle the error
+		}
+	}
+
 	useEffect(() => {
 		const urlParams = new URLSearchParams(window.location.search);
 		const token = urlParams.get("accessToken");
@@ -57,6 +74,8 @@ export default function Homepage({ socket }) {
 				<button className="homepage-button" onClick={handleJoinRoom}>
 					Join Room
 				</button>
+
+				<button onClick={temp}>Temp Button!</button>
 			</div>
 		</div>
 	);

@@ -12,7 +12,8 @@ passport.use(
 		},
 		function (accessToken, refreshToken, profile, done) {
 			// This function is called after the user grants permission and the authorization code is exchanged for an access token
-			done(null, { profile, accessToken });
+			console.log("REFRESHTOKEN: ", refreshToken);
+			done(null, { profile, accessToken, refreshToken });
 		}
 	)
 );
