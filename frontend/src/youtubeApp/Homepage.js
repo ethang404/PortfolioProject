@@ -1,5 +1,6 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
+import { CookieUtil } from "../utils/CookieUtil";
 import io from "socket.io-client";
 
 import "./Homepage.css";
@@ -24,9 +25,10 @@ export default function Homepage({ socket }) {
 		}
 	}
 
-	async function temp() {
+	async function tempFunc() {
 		try {
 			const response = await fetch("http://localhost:8080/yt/testingURL", {
+				method: "GET",
 				credentials: "include",
 			});
 			if (!response.ok) {
@@ -34,24 +36,33 @@ export default function Homepage({ socket }) {
 			}
 			const data = await response.json();
 			console.log(data);
+
 			// Process the data or update the state with the received data
 		} catch (error) {
 			console.error(error);
 			// Handle the error
 		}
+		let { accessToken, refreshToken } = CookieUtil();
+		console.log("accessToken(homepage2):", accessToken);
+		console.log("refreshToken(homepage2):", refreshToken);
 	}
 
 	useEffect(() => {
-		const urlParams = new URLSearchParams(window.location.search);
+		//let { accessToken, refreshToken } = CookieUtil();
+		//console.log("accessToken(homepage):", accessToken);
+		//console.log("refreshToken(homepage):", refreshToken);
+		/*const urlParams = new URLSearchParams(window.location.search);
 		const token = urlParams.get("accessToken");
-		setAccessToken(token);
-		console.log(token);
+		setAccessToken(token);*/
+		// Step 3: Now, you can access the different values within the cookie
+		/*console.log(token);
 		console.log(accessToken);
 		localStorage.setItem("accessToken", JSON.stringify(token));
 
 		var temp = localStorage.getItem("accessToken");
 		//setToken(temp);
-		console.log("Homepage access Token: ", accessToken);
+		console.log("Homepage access Token: ", accessToken);*/
+		//testing cookies
 	}, []);
 
 	return (
@@ -75,7 +86,7 @@ export default function Homepage({ socket }) {
 					Join Room
 				</button>
 
-				<button onClick={temp}>Temp Button!</button>
+				<button onClick={tempFunc}>Temp Button!</button>
 			</div>
 		</div>
 	);

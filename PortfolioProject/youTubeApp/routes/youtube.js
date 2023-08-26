@@ -16,6 +16,7 @@ async function refreshAccessToken(refreshToken) {
 		// The response will contain a new access token
 		const accessToken = response.data.access_token;
 		console.log("Grabbing a new access token");
+		console.log("New accessToken: ", accessToken);
 		// Optionally, you can also receive a new refresh token if the previous one has expired
 
 		// Return the new access token
@@ -28,97 +29,134 @@ async function refreshAccessToken(refreshToken) {
 
 //fetch request here with data from req header
 async function verifyToken(req, res, next) {
-	const token = req.headers.authorization.split(" ")[1];
-	//token = null;
+	console.log("do I have a token: ", req.cookies.accessToken); //accessToken is not stored at this point for some reason
+	console.log("do I have a token2: ", JSON.stringify(req.cookies)); //accessToken is not stored at this point for some reason
+	console.log("do I have a token3: ", JSON.stringify(req.session.accessToken)); //accessToken is not stored at this point for some reason
+	console.log("verifyToken accessToken: ", req.headers);
+	//const token = req.headers.authorization.split(" ")[1];
+	let token = req.cookies.accessToken;
+	let refreshToken = req.cookies.refreshToken;
 	if (!token) {
 		return res.status(401).json({ error: "Missing token" });
 	}
 
+	if (!refreshToken) {
+		return res.status(401).json({ error: "Missing refreshToken" });
+	}
+
 	try {
-		const response = await axios.get(
-			`https://oauth2.googleapis.com/tokeninfo?access_token=${token}`
-		);
+		let response = await axios.get(`https://oauth2.googleapis.com/tokeninfo?access_token=${token}`);
 		const tokenInfo = response.data;
-
+		console.log("myTokenInfo: ", tokenInfo);
 		// Check if the token is valid
-		if (tokenInfo.error) {
-			console.log("TESTINGINGG: " + response.data);
-			const refreshedToken = await refreshAccessToken(req.cookies.refreshToken);
-			if (!refreshedToken) {
-				return res.status(401).json({ error: "Invalid token" });
-			}
-			// Add the refreshed access token to the request object
-			req.tokenInfo = {
-				...tokenInfo,
-				access_token: refreshedToken,
-			};
-
-			// Proceed to the next middleware or route handler
-			next();
-		} else {
-			// Add the token info to the request object for future use if needed
-			req.tokenInfo = tokenInfo;
-
-			// Proceed to the next middleware or route handler
+		if (!tokenInfo.error) {
 			next();
 		}
 	} catch (error) {
-		console.error("Error verifying token:", error);
-		return res.status(500).json({ error: "Internal server error" });
+		// Check if the error response is for an invalid token
+		if (
+			//if token is invalid: refresh token
+			error.response &&
+			error.response.status === 400 &&
+			error.response.data.error === "invalid_token"
+		) {
+			console.log("my refreshToken: ", req.cookies.refreshToken); //refreshToken is undefined
+			const refreshedToken = await refreshAccessToken(req.cookies.refreshToken);
+			console.log("new my accessToken: ", refreshedToken);
+			if (!refreshedToken) {
+				console.log("INVALID-Token on backend");
+				return res.status(401).json({ error: "Invalid token" });
+			}
+
+			res.cookie("accessToken", refreshedToken, {
+				maxAge: 24 * 60 * 60 * 1000,
+				httpOnly: true,
+			}); // 1 day
+			next();
+			return;
+			//console.log("Token verification failed: Invalid token");
+			//return res.status(401).json({ error: "Invalid token" });
+			//return res.status(201).json({ access: "refreshToken" });
+		}
+		//else some other error
+		console.error("Error verifying token:", error.response.data);
+		//return res.status(500).json({ error: "Internal server error" });
 	}
 }
 
 async function test(req) {
-	const accessToken = req.headers.authorization.split(" ")[1];
 	const q = req.headers.q;
+
+	console.log("myAccessToken in test: ", req.cookies.accessToken);
 	console.log("your query is:", q);
 	console.log(
 		"full call is: ",
 		"https://www.googleapis.com/youtube/v3/search?q=" + q + "&type=video"
 	);
-	let response = await axios.get(
-		"https://www.googleapis.com/youtube/v3/search?q=" + q + "&type=video",
-		{
-			headers: {
-				Authorization: `Bearer ${accessToken}`,
-			},
-		}
-	);
+	try {
+		let response = await axios.get(
+			"https://www.googleapis.com/youtube/v3/search?q=" + q + "&type=video",
+			{
+				headers: {
+					Authorization: `Bearer ${req.cookies.accessToken}`,
+				},
+			}
+		);
+		return response.data.items;
+	} catch (e) {
+		console.log("Something went wrong with searching..", e);
+		//what happens if I do res.send(500) here?
+		throw new Error("An error occurred in search function", e);
+	}
 
 	console.log("success!!!: ", response.data);
 	console.log("testing first val: ", response.data.items[0].id);
 	return response.data.items;
 }
 
+// Endpoint just to verify the token
+router.get("/verifyToken", verifyToken, (req, res) => {
+	res.sendStatus(200); // If the middleware didn't throw an error, the token is valid
+});
+
 router.get("/searchVideo", verifyToken, async (req, res) => {
-	const searchRes = await test(req);
-	console.log("returning vals...", searchRes[0].id);
-	res.send(searchRes);
+	//for some reason the req.cookies.accessToken is not being applied
+	console.log("current accessToken in searchVideo: ", req.cookies.accessToken);
+	try {
+		const searchRes = await test(req);
+		console.log("returning vals...", searchRes[0].id);
+		res.send(searchRes);
+	} catch (e) {
+		console.log("Error with searching(in /searchVideo", e);
+		res.status(500).send("An error occurred while processing the search query");
+	}
 	//const accessToken = req.headers.authorization.split(" ")[1];
 });
 
 router.get("/testingURL", (req, res) => {
-	console.log(req.cookies.refreshToken);
-	const accessToken = req.cookies.accessToken;
-
-	console.log(JSON.stringify(req.cookies));
-
-	// Use the accessToken in your logic
-	console.log("tesing my accessToken in youtube.js");
-	console.log(accessToken);
+	let accessToken = req.cookies.accessToken;
+	let refreshToken = req.cookies.refreshToken;
+	console.log("pls work: ", accessToken);
+	console.log("pls work2: ", refreshToken);
 	res.send(JSON.stringify(accessToken));
 });
 
 var watchObject = {}; //could also store in session?
 
 router.get("/loadWatchList", verifyToken, (req, res) => {
+	//sessions dont work. I have to store on frontend and pass to backend
+
+	//cookies get sent to frontend :/
+	console.log("I am now in loadWatchList---------------------------");
+	console.log("current accessToken in loadWatchList: ", req.cookies.accessToken);
+
 	console.log("loading current watchObjectList: ", watchObject);
 	let tempRoom = req.headers.room;
-	let tempVidCount = req.headers.videoCount;
 	if (tempRoom in watchObject) {
-		res.send(watchObject[tempRoom]); //send back as [[watchList]videoIndex] -- [[tlyer1,speedy]4]
+		console.log("this is what im sending back: ", watchObject[tempRoom]);
+		res.send(watchObject[tempRoom]); //send back as 23: {videoList:[tyler1,speedy],1}
 	} else {
-		res.send([]);
+		res.send(); //return nothing?
 	}
 
 	//const accessToken = req.headers.authorization.split(" ")[1];
@@ -164,25 +202,22 @@ var returnRouter = function (io) {
 			console.log("my-room: ", data.room);
 
 			//add to watchObject to send to users whom join late
-			/*if (data.room in watchObject) {
-				let tempRoom = data.room;
-				watchObject.tempRoom.push(data.videoId);
-				//watchObject[data.room].push(data.videoId);
-			} else {
-				watchObject[data.room] = [data.videoId];
-			}*/
+
 			if (watchObject[data.room] == null) {
-				watchObject[data.room] = [];
+				//watchObject[data.room] = []; //change to 23 : {watchList: [tyler1,speedy], videoCount: 0}
+				watchObject[data.room] = { videoList: [], videoCount: 0 };
 			}
 
-			watchObject[data.room].push(data.videoId);
+			watchObject[data.room].videoList.push(data.videoId);
 			console.log("searchVideo: ", watchObject);
 			//play video(video id) event to room
 			socket.to(data.room).emit("user-searched", data);
 		});
 		socket.on("skipVideo", (data) => {
-			console.log("my-room: ", data);
+			console.log("my-roomSkippy: ", data);
 			//play video(video id) event to room
+			watchObject[data.room].videoCount = data.videoCount;
+			//add room:videoCount
 			socket.to(data.room).emit("user-skipped", data);
 		});
 	});

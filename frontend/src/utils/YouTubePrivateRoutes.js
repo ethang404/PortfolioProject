@@ -7,31 +7,35 @@ export default function PrivateRoute() {
 	//const accessToken = jwt_decode(localStorage.getItem("accessToken"));
 	//console.log("This is my private route: ", accessToken);
 	//const auth = { token: accessToken };
-	/*
+
 	const [isLoggedIn, setLoggedIn] = useState(false);
+	const [loading, setLoading] = useState(true);
 
 	async function validateToken() {
-		let resp = await fetch("http://localhost:8080/auth/validToken", {
+		let resp = await fetch("http//localhost:8080/yt/verifyToken", {
 			method: "GET",
+			credentials: "include", // Include HttpOnly cookies
 			headers: {
 				"Content-Type": "application/json",
-				Authorization: "Bearer " + localStorage.getItem("accessToken"),
 			},
 		});
 		if (resp.ok) {
 			console.log("user is valid!");
 			setLoggedIn(true);
+		} else {
+			console.log("invalid user", resp);
 		}
+		setLoading(false);
 	}
 
 	useEffect(() => {
-		let accessToken = localStorage.getItem("accessToken");
-		if (accessToken) {
-			validateToken();
-		} else {
-			navigate("/Project/YoutubeApp/Login");
-		}
-	});*/
+		validateToken();
+	}, []);
+
 	//return isLoggedIn ? <Outlet /> : null;
-	return true ? <Outlet /> : <Navigate to="/Project/YoutubeApp/Login" />;
+	if (loading) {
+		return <div>Loading...</div>; // Show a loading state while validating token
+	}
+
+	return isLoggedIn ? <Outlet /> : <Navigate to="/Project/YoutubeApp/Login" />;
 }

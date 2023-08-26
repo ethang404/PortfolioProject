@@ -11,6 +11,12 @@ const cookieParser = require("cookie-parser");
 
 const cors = require("cors"); //install cors
 app.use(
+	cors({
+		origin: "http://localhost:3000",
+		credentials: true,
+	})
+);
+app.use(
 	session({
 		secret: "my-secret-key",
 		resave: true,
@@ -31,13 +37,15 @@ const io = new Server(server, {
 	cors: {
 		origin: "http://localhost:3000",
 		methods: ["GET", "POST"],
+		credentials: true,
 	},
 });
 
 const loginroute = require("./routes/auth"); //import routing from routes/login
 const youtubeRoutes = require("./routes/youtube")(io);
 
-app.use(cors());
+//app.use(cors(corsOptions));
+//app.use(cors());
 
 // Handling routes request for login functions(including JWT tokens)
 app.get("/", (req, res) => {

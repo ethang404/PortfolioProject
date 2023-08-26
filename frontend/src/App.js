@@ -3,6 +3,7 @@ import "./App.css";
 import HomePage from "./portfolio/HomePage";
 import Projects from "./portfolio/Projects";
 import TodoLogin from "./todo/TodoLogin";
+import NotFound from "./NotFound";
 
 import TodoHomepage from "./todo/TodoHomepage";
 import PrivateRoutes from "./utils/PrivateRoutes";
@@ -29,7 +30,6 @@ function App() {
 					<Route exact path="/Project/To-do-register" element={<TodoRegister />}></Route>
 
 					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
-					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
 
 					<Route element={<YouTubePrivateRoutes />}>
 						<Route
@@ -49,6 +49,7 @@ function App() {
 						<Route path="/Project/To-do/Task/:id" element={<TaskEdit />}></Route>
 						<Route path="/Project/To-do/AddTask/" element={<AddTask />}></Route>
 					</Route>
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</Router>
 		</div>
