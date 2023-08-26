@@ -27,7 +27,7 @@ export default function Homepage({ socket }) {
 
 	async function tempFunc() {
 		try {
-			const response = await fetch("http://localhost:8080/yt/testingURL", {
+			const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/testingURL`, {
 				method: "GET",
 				credentials: "include",
 			});

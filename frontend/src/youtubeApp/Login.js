@@ -49,7 +49,7 @@ export default function Login() {
 		//blooo
 		const fetchVerifyToken = async () => {
 			try {
-				const response = await fetch("http://localhost:8080/yt/verifyToken", {
+				const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/verifyToken`, {
 					method: "GET",
 					credentials: "include", // Include cookies
 				});

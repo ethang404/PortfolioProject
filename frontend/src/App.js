@@ -19,7 +19,7 @@ import io from "socket.io-client";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-const socket = io.connect("http://localhost:8080");
+const socket = io.connect(`${process.env.REACT_APP_BACKEND_URL}`);
 function App() {
 	return (
 		<div className="App">

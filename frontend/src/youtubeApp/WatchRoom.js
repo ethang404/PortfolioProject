@@ -19,7 +19,7 @@ export default function WatchRoom({ socket }) {
 
 	useEffect(() => {
 		//this is for if user joins late
-		console.log("on first render");
+		console.log("on first render..here is my env variable: ", process.env.REACT_APP_BACKEND_URL);
 		loadWatchList();
 	}, []);
 
@@ -30,7 +30,7 @@ export default function WatchRoom({ socket }) {
 	async function loadWatchList() {
 		//Here add error handling where if accessToken is bad and refreshToken cannot get new one on backend
 		//redirect user to login URL
-		let response = await fetch("http://localhost:8080/yt/loadWatchList", {
+		let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/loadWatchList`, {
 			method: "GET",
 			credentials: "include", // Include HttpOnly cookies
 			headers: {
@@ -104,7 +104,7 @@ export default function WatchRoom({ socket }) {
 
 	async function searchYoutube() {
 		try {
-			let resp = await fetch("http://localhost:8080/yt/searchVideo", {
+			let resp = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/searchVideo`, {
 				method: "GET",
 				credentials: "include",
 				headers: {
