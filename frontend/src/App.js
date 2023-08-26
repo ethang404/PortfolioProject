@@ -3,6 +3,7 @@ import "./App.css";
 import HomePage from "./portfolio/HomePage";
 import Projects from "./portfolio/Projects";
 import TodoLogin from "./todo/TodoLogin";
+import NotFound from "./NotFound";
 
 import TodoHomepage from "./todo/TodoHomepage";
 import PrivateRoutes from "./utils/PrivateRoutes";
@@ -18,7 +19,7 @@ import io from "socket.io-client";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-const socket = io.connect("http://localhost:8080");
+const socket = io.connect(`${process.env.REACT_APP_BACKEND_URL}`);
 function App() {
 	return (
 		<div className="App">
@@ -28,7 +29,6 @@ function App() {
 					<Route exact path="/Project/To-do-login" element={<TodoLogin />}></Route>
 					<Route exact path="/Project/To-do-register" element={<TodoRegister />}></Route>
 
-					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
 					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
 
 					<Route element={<YouTubePrivateRoutes />}>
@@ -49,6 +49,7 @@ function App() {
 						<Route path="/Project/To-do/Task/:id" element={<TaskEdit />}></Route>
 						<Route path="/Project/To-do/AddTask/" element={<AddTask />}></Route>
 					</Route>
+					<Route path="*" element={<NotFound />} />
 				</Routes>
 			</Router>
 		</div>

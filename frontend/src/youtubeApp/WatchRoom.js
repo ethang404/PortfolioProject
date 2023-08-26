@@ -1,11 +1,9 @@
 /*global google*/
+import "./WatchRoom.css";
 import io from "socket.io-client";
 import { useState, useEffect, useRef } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
 import { useNavigate, useParams } from "react-router-dom";
-
-//import videoWatchList from state management file recoilStates.js
-//import { videoWatchList } from "../recoilStates";
 
 //const socket = io.connect("http://localhost:8080");
 //var socket = io.connect();
@@ -15,34 +13,72 @@ export default function WatchRoom({ socket }) {
 	const playerRef = useRef();
 	const [videoSearch, setVideoSearch] = useState("");
 	const [searchResponse, setSearchResponse] = useState([]);
-	let [videoCount, setVideoCount] = useState(0);
-	//const [watchList, setWachList] = useRecoilState(videoWatchList);
+	const [videoCount, setVideoCount] = useState(0);
 
-	//const setWachList = useSetRecoilState(videoWatchList);
-
-	//PLAN:
-	//When I search video, if ok: I will update my watchList with new video and then emit "searchVideo" and pass videoId like before
-	//on event "user-searched" I will add videoId to watchList(Note: this event only occurs on other's client side. Not main since its socket ev)
-
-	//on room join, I will pass current watchList value(to handle case where a user joins later)
-
-	//on video skip I will do it like before and increment videoCount, but I will do so on the watchList now
-
-	//when watchlist[videoCount] == len(watchList) then clear watchList
-	//how to get lenth of watchList?
-	//Where to do this check? -do before any operation?
+	const [currentTime, setCurrentTime] = useState(0.0);
 
 	useEffect(() => {
-		// Reads the recoil value
-		//const watchList = useRecoilValue(videoWatchList);
-		//socket.emit("join_room", {room:room,watchList:watchList});
+		//this is for if user joins late
+		console.log("on first render..here is my env variable: ", process.env.REACT_APP_BACKEND_URL);
+		loadWatchList();
+	}, []);
+
+	useEffect(() => {
+		playerRef.current.internalPlayer.seekTo(currentTime); //this is crazy bugged for some reason
+	}, [currentTime]);
+
+	async function loadWatchList() {
+		//Here add error handling where if accessToken is bad and refreshToken cannot get new one on backend
+		//redirect user to login URL
+		let response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/loadWatchList`, {
+			method: "GET",
+			credentials: "include", // Include HttpOnly cookies
+			headers: {
+				"Content-Type": "application/json",
+			},
+			headers: {
+				room: room,
+				videoCount: videoCount,
+				Authorization: "Bearer " + localStorage.getItem("accessToken"),
+			},
+		});
+		let data = await response.json();
+		console.log("whoop: ", data);
+		setSearchResponse(data.videoList); //also attach a videoCount variable so i know what index I'm on(video1 vs video2 in queue) for late join users/refreshes
+		setVideoCount(data.videoCount);
+	}
+
+	async function getTime(otherTime) {
+		let myTime = await playerRef.current.internalPlayer.getCurrentTime();
+		console.log("Within getTime funcion: ", myTime, "Other user's time: ", otherTime);
+		if (Math.abs(myTime - otherTime) > 2.0) {
+			//if time difference greater than 2 seconds update time to be the later time.
+			setCurrentTime(otherTime);
+		}
+		return myTime;
+	}
+
+	useEffect(() => {
+		//socket.emit("join_room", {room:room,watchList:searchResponse});
 
 		socket.emit("join_room", room); //join a room..have to call again to work at refresh..
 		//I could also send the current video list here I guess?
+
 		socket.on("user-played", (data) => {
 			console.log("other user clicked play..(room): " + room);
 			playerRef.current.internalPlayer.playVideo();
 		});
+		socket.on("update-time", (data) => {
+			console.log("dataInfo: " + data);
+			let time = getTime(data);
+			console.log(
+				"[object,promise]compared with my time... : " + time //says object promise?
+			);
+
+			//set to larger time(max of incoming and currentTime)
+			//if within 3 sec.
+		});
+
 		socket.on("user-paused", (data) => {
 			console.log("other user clicked pause: ");
 			playerRef.current.internalPlayer.pauseVideo();
@@ -65,26 +101,15 @@ export default function WatchRoom({ socket }) {
 	function refreshToken() {
 		//call when accessToken expired..if refresh token expired-log out
 	}
-	function addVideo(videoId) {
-		/*setWatchList((oldWatchList) => [
-			...oldWatchList,
-			{
-				id: Math.floor(Math.random() * 100),//get random int 1-100
-				text: videoId,
-			},
-		]);*/
-	}
 
 	async function searchYoutube() {
 		try {
-			let resp = await fetch("http://localhost:8080/yt/searchVideo", {
+			let resp = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/searchVideo`, {
 				method: "GET",
+				credentials: "include",
 				headers: {
 					"Content-Type": "application/json",
-					Authorization: "Bearer " + localStorage.getItem("accessToken"),
 					q: videoSearch,
-					//q: "tyler1",
-					//Authorization: "Bearer " + "testyyy",
 				},
 			});
 
@@ -92,14 +117,25 @@ export default function WatchRoom({ socket }) {
 				let data = await resp.json();
 				console.log("recieved value from search result: ");
 				console.log(data);
-				setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]);
-				//emit here to update other user if search result good:
+
+				setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]); //here
 
 				socket.emit("searchVideo", { videoId: data[0].id.videoId, room: room });
+				/*
+				//setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]); //here
+				if (searchResponse && searchResponse.length > 0) {
+					setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]); //here
+					//emit here to update other user if search result good:
+				} else {
+					setSearchResponse(data[0].id.videoId);
+				}
+				
 
 				//setSearchResponse(data[0].id.videoId);
 				console.log(data[0].id.videoId);
+				console.log("my searchResponse: ", searchResponse); //why is this undefined on first render?
 				// process the data here
+*/
 			} else {
 				console.log("HTTP Error:", resp.status);
 			}
@@ -118,17 +154,9 @@ export default function WatchRoom({ socket }) {
 	}
 
 	return (
-		<div>
-			<button
-				onClick={() => {
-					console.log(socket.connected);
-					socket.emit("searchVideo", { videoId: videoSearch, room: room });
-				}}
-			>
-				emitSearch
-			</button>
+		<div className="Parent">
 			<h3>You can search for a video in the box below! Give it a go!</h3>
-			<form>
+			<form className="userInput">
 				<label>Search for Video:</label>
 				<input
 					type="text"
@@ -137,28 +165,22 @@ export default function WatchRoom({ socket }) {
 					onChange={(e) => setVideoSearch(e.target.value)}
 				></input>
 				<button
+					className="CustomButton"
 					onClick={(event) => {
 						event.preventDefault();
 						searchYoutube();
 					}}
 				>
-					Hehe clicky me to search!
+					Search!
 				</button>
 			</form>
-			<button
-				onClick={() => {
-					setVideoCount(videoCount++);
-					socket.emit("skipVideo", { videoCount, room: room });
-				}}
-			>
-				Skip Ahead
-			</button>
+
 			<h3>Room Code is: {room}</h3>
-			<h3>Current videoId is: {searchResponse[0]}</h3>
-			<div>
+			<h3>Current videoCount is: {JSON.stringify(videoCount)}</h3>
+			<div className="YoutubePlayer">
 				<YouTube
 					ref={playerRef}
-					videoId={searchResponse[videoCount]} // defaults -> ''
+					videoId={searchResponse == undefined ? null : searchResponse[videoCount]} // defaults -> ''
 					//id={string} // defaults -> ''
 					//className={string} // defaults -> ''
 					//iframeClassName={string} // defaults -> ''
@@ -177,26 +199,38 @@ export default function WatchRoom({ socket }) {
 						console.log(event);
 						console.log(event.target);
 						console.log("now playing");
+						//here im going to emit an event to get current time.
+						//when other clients recive the event..compare to their own. If within 3 seconds:do nothing
+						//else: update current time = recieved time from event.
+						socket.emit("updateTime", { currentTime: event.target.getCurrentTime(), room: room });
+
 						event.target.playVideo();
 						socket.emit("playVideo", { room: room });
 					}} // defaults -> noop
 					onPause={(event) => {
 						console.log("now pausing", event);
+
 						socket.emit("pauseVideo", { room: room });
 					}} // defaults -> noop
 					//onEnd={func} // defaults -> noop
 					//onError={func} // defaults -> noop
 
-					//THIS IS WHAT I WANT
 					onStateChange={(event) => {
 						console.log("now changing state", event);
-						console.log(searchResponse[videoCount]);
 					}} // defaults -> noop
 					//onPlaybackRateChange={func} // defaults -> noop
 					//onPlaybackQualityChange={func} // defaults -> noop
 				/>
 			</div>
-			This is my Watch room where I embed youtube vid
+			<button
+				className="CustomButton"
+				onClick={() => {
+					setVideoCount(videoCount + 1);
+					socket.emit("skipVideo", { videoCount: videoCount + 1, room: room });
+				}}
+			>
+				Skip
+			</button>
 		</div>
 	);
 }

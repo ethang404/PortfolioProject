@@ -16,11 +16,6 @@ export default function Login() {
 		console.log("call back response", response);
 		console.log("encoded JWT", response.credential);
 		var access_token = response.credential;
-	}
-	function handleLogin(response) {
-		console.log("call back response", response);
-		console.log("encoded JWT", response.credential);
-		var access_token = response.credential;
 
 		setToken(response.credential);
 		var userObj = jwt_decode(response.credential);
@@ -42,7 +37,7 @@ export default function Login() {
 
 	useEffect(() => {
 		/* global google */
-		google.accounts.id.initialize({
+		/*google.accounts.id.initialize({
 			client_id: process.env.REACT_APP_CLIENT_ID,
 			callback: handleLogin,
 		});
@@ -50,7 +45,29 @@ export default function Login() {
 		google.accounts.id.renderButton(document.getElementById("SignIn"), {
 			theme: "outline",
 			size: "large",
-		});
+		});*/
+		//blooo
+		const fetchVerifyToken = async () => {
+			try {
+				const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/verifyToken`, {
+					method: "GET",
+					credentials: "include", // Include cookies
+				});
+
+				if (response.status === 200) {
+					// Redirect to the specified route
+					console.log("all good: redirecting");
+					navigate("/Project/YoutubeApp/Home", { replace: true });
+				} else {
+					console.log("bruh bad");
+					// Do nothing
+				}
+			} catch (error) {
+				console.error("Error:", error);
+			}
+		};
+
+		fetchVerifyToken();
 	}, []);
 
 	async function googleOAuth() {

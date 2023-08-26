@@ -17,16 +17,30 @@ router.get("/success", (req, res) => {
 	console.log("myVal", req.isAuthenticated());
 	res.cookie("accessToken", req.user.accessToken, { maxAge: 24 * 60 * 60 * 1000 }); // 1 day
 	console.log("Cookie set!");
+	console.log(req.cookies.accessToken);
 
-	res.redirect(
+	console.log("saving refreshToken.. ");
+	console.log(req.user);
+	//httpOnly:true below
+	res.cookie("refreshToken", req.user.refreshToken, {
+		maxAge: 24 * 60 * 60 * 1000,
+	}); // 1 day
+
+	/*res.redirect(
 		"http://localhost:3000/Project/YoutubeApp/Home?accessToken=" + req.session.accessToken
-	);
+	);*/
+	res.redirect("http://localhost:3000/Project/YoutubeApp/Home");
 });
 router.get("/error", (req, res) => res.send("error logging in"));
 
 router.get(
 	"/google",
-	passport.authenticate("google", { scope: ["profile", "https://www.googleapis.com/auth/youtube"] })
+	passport.authenticate("google", {
+		scope: ["profile", "https://www.googleapis.com/auth/youtube"],
+		accessType: "offline",
+		//approvalPrompt: "force",
+		prompt: "consent",
+	})
 ); //this navigates to the consent screen to
 //get code from user profile
 
@@ -53,6 +67,11 @@ router.get("/", (req, res) => {
 	console.log(process.env.GOOGLE_CLIENT_ID);
 
 	res.send("This is the youtube HOME request");
+});
+router.get("/error", (req, res) => {
+	console.log("Error authenticating");
+
+	res.status(500).send("Error: user not valid");
 });
 
 router.get("/validToken", async (req, res) => {

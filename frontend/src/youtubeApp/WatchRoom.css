@@ -1,0 +1,40 @@
+.Parent {
+	margin: 20px;
+	padding: 20px;
+	border: 1px solid #ccc;
+	--background-color: #f0f0f0;
+	text-align: center;
+}
+
+.userInput {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 10px;
+}
+
+.userInput label {
+	margin-right: 10px;
+}
+
+.userInput input {
+	padding: 5px;
+}
+
+.YoutubePlayer {
+	margin: 20px;
+}
+
+.CustomButton {
+	background-color: #007bff;
+	color: white;
+	border: none;
+	padding: 10px 20px;
+	font-size: 14px;
+	cursor: pointer;
+	transition: background-color 0.3s ease;
+}
+
+.CustomButton:hover {
+	background-color: #0056b3;
+}
