@@ -23,7 +23,7 @@ const socket = io.connect(`${process.env.REACT_APP_BACKEND_URL}`);
 function App() {
 	return (
 		<div className="App">
-			<Router>
+			<Router basename="/">
 				<Routes>
 					<Route path="/" element={<HomePage />}></Route>
 					<Route exact path="/Project/To-do-login" element={<TodoLogin />}></Route>
