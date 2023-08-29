@@ -75,12 +75,12 @@ export default function HomePage() {
 					<h4>Project number x</h4>
 					<p>This is project num 1 description</p>
 					<p></p>
-					<a href="http://localhost:3000/Project/To-do-login">Click here to see</a>
+					<a href="/Project/To-do-login">Click here to see</a>
 				</div>
 				<div className="project">
 					<h4>Project number x</h4>
 					<p>This is project num 2 description</p>
-					<a href="http://localhost:3000/Project/YoutubeApp/Login/">Click here to see</a>
+					<a href="/Project/YoutubeApp/Login/">Click here to see</a>
 				</div>
 			</section>
 
