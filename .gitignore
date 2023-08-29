@@ -8,7 +8,9 @@ node_modules/
 /coverage
 
 # production
-/build
+/build/
+build/
+frontend/build/
 __pycache__/
 # misc
 .DS_Store
