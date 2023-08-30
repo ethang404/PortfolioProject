@@ -12,7 +12,7 @@ export default function PrivateRoute() {
 	const [loading, setLoading] = useState(true);
 
 	async function validateToken() {
-		let resp = await fetch("http//localhost:8080/yt/verifyToken", {
+		let resp = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/verifyToken`, {
 			method: "GET",
 			credentials: "include", // Include HttpOnly cookies
 			headers: {

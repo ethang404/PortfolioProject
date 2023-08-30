@@ -79,7 +79,7 @@ export default function Login() {
 		<div>
 			<div id="SignIn"></div>
 
-			<a href="http://localhost:8080/auth/google">Click me</a>
+			<a href="http://18.209.103.169:8080/auth/google">Click me</a>
 		</div>
 	);
 }

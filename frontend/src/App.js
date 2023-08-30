@@ -19,7 +19,11 @@ import io from "socket.io-client";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-const socket = io.connect(`${process.env.REACT_APP_BACKEND_URL}`);
+const socket = io.connect("http://18.209.103.169:8080/", {
+	extraHeaders: {
+		"Access-Control-Allow-Credentials": "true",
+	},
+});
 function App() {
 	return (
 		<div className="App">

@@ -12,7 +12,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors"); //install cors
 app.use(
 	cors({
-		origin: "http://localhost:3000",
+		origin: "https://legendary-gecko-c5294f.netlify.app",
 		credentials: true,
 	})
 );
