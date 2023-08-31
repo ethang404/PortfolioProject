@@ -1,10 +1,19 @@
 const express = require("express"); //import express
 const session = require("express-session");
 const app = express(); //express server
-const http = require("http");
-const server = http.createServer(app);
+//const http = require("http");
+const fs = require("fs");
+const https = require("https");
+
+const options = {
+	//setup for https
+	key: fs.readFileSync("/etc/letsencrypt/live/youtubebackend.com/privkey.pem"),
+	cert: fs.readFileSync("/etc/letsencrypt/live/youtubebackend.com/fullchain.pem"),
+};
+
+const server = https.createServer(options, app);
 const { Server } = require("socket.io");
-const PORT = 8080;
+const PORT = 443;
 const passportSetup = require("./passport");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
