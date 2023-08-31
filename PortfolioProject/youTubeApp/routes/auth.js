@@ -55,7 +55,7 @@ router.get(
 		//const accessToken = req.user.accessToken;
 		//res.cookie("accessToken", accessToken);
 		// This function is called after the user grants permission and the authorization code is exchanged for an access token
-		res.redirect("http://18.209.103.169:8080/auth/success");
+		res.redirect("https://youtubebackend.com/auth/success");
 		//res.redirect("http://localhost:3000/Project/YoutubeApp/Home");
 	}
 );

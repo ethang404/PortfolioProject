@@ -43,7 +43,7 @@ export default function AddTask() {
 
 	async function handleSubmit(e) {
 		e.preventDefault();
-		let response = await fetch("http://127.0.0.1:8000/api/createTask/", {
+		let response = await fetch("https://youtubebackend.com/api/createTask/", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json",
@@ -67,7 +67,7 @@ export default function AddTask() {
 		} else if (jwt_decode(localStorage.getItem("accessToken"))["exp"] * 1000 <= Date.now()) {
 			//if access token expired -> refresh token.
 
-			let response = await fetch("http://127.0.0.1:8000/api/token/refresh/", {
+			let response = await fetch("https://youtubebackend.com/api/token/refresh/", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",

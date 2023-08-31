@@ -19,7 +19,7 @@ import io from "socket.io-client";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-const socket = io.connect("http://18.209.103.169:8080/", {
+const socket = io.connect("https://youtubebackend.com/", {
 	extraHeaders: {
 		"Access-Control-Allow-Credentials": "true",
 	},
