@@ -44,7 +44,7 @@ app.use(cookieParser());
 
 const io = new Server(server, {
 	cors: {
-		origin: "https://legendary-gecko-c5294f.netlify.app/", //change to new frontend
+		origin: "https://legendary-gecko-c5294f.netlify.app",
 		methods: ["GET", "POST"],
 		credentials: true,
 	},
