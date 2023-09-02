@@ -49,11 +49,6 @@ router.get(
 	"/google/callback",
 	passport.authenticate("google", { failureRedirect: "/auth/error" }),
 	function (req, res) {
-		//console.log(req.user);
-		//console.log("MY TOKEN: ", req.user.accessToken);
-		//console.log("accessing accessToken in callback!...going to redirect to forntend now");
-		//const accessToken = req.user.accessToken;
-		//res.cookie("accessToken", accessToken);
 		// This function is called after the user grants permission and the authorization code is exchanged for an access token
 		res.redirect("https://youtubebackend.com/auth/success");
 		//res.redirect("http://localhost:3000/Project/YoutubeApp/Home");
