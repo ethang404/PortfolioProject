@@ -15,7 +15,12 @@ router.get("/success", (req, res) => {
 	console.log("session object:", req.session.accessToken);
 
 	console.log("myVal", req.isAuthenticated());
-	res.cookie("accessToken", req.user.accessToken, { maxAge: 24 * 60 * 60 * 1000 }); // 1 day
+	res.cookie("accessToken", req.user.accessToken, {
+		maxAge: 24 * 60 * 60 * 1000,
+		sameSite: "None", // Adjust sameSite and secure attributes as needed
+		secure: true,
+		path: "/", // Set the path to '/'
+	}); // 1 day
 	console.log("Cookie set!");
 	console.log(req.cookies.accessToken);
 
@@ -24,6 +29,9 @@ router.get("/success", (req, res) => {
 	//httpOnly:true below
 	res.cookie("refreshToken", req.user.refreshToken, {
 		maxAge: 24 * 60 * 60 * 1000,
+		sameSite: "None", // Adjust sameSite and secure attributes as needed
+		secure: true,
+		path: "/", // Set the path to '/'
 	}); // 1 day
 
 	/*res.redirect(
