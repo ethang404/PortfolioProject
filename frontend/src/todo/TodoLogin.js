@@ -44,7 +44,6 @@ export default function TodoLogin() {
 
 	return (
 		<div>
-			<Navbar />
 			<ThemeProvider theme={darkTheme}>
 				<CssBaseline />
 

@@ -4,6 +4,7 @@ import HomePage from "./portfolio/HomePage";
 import Projects from "./portfolio/Projects";
 import TodoLogin from "./todo/TodoLogin";
 import NotFound from "./NotFound";
+import Navbar from "./Navbar";
 
 import TodoHomepage from "./todo/TodoHomepage";
 import PrivateRoutes from "./utils/PrivateRoutes";
@@ -27,9 +28,11 @@ const socket = io.connect("https://youtubebackend.com/", {
 function App() {
 	return (
 		<div className="App">
+			<Navbar />
 			<Router basename="/">
 				<Routes>
 					<Route path="/" element={<HomePage />}></Route>
+					<Route exact path="/Projects" element={<Projects />}></Route>
 					<Route exact path="/Project/To-do-login" element={<TodoLogin />}></Route>
 					<Route exact path="/Project/To-do-register" element={<TodoRegister />}></Route>
 

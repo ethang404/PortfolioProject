@@ -38,18 +38,21 @@ body {
 	height: auto;
 }
 
-.about-me {
-	display: flex;
-	flex-direction: row;
-	margin-bottom: 50px;
-}
-
 .Pic {
 	height: 200px;
 	width: 200px;
-	margin-right: 20px;
 	border-radius: 50%;
 	object-fit: cover;
+	flex-shrink: 0; /* Prevent the image from shrinking */
+	object-position: center top; /* Adjust this value to move the focal point */
+}
+
+.about-me {
+	display: flex;
+	flex-direction: row;
+	align-items: center; /* Center vertically */
+	gap: 15px;
+	margin-bottom: 50px;
 }
 
 .about-me-info {
@@ -63,6 +66,11 @@ body {
 }
 
 .about-me-info p {
+	font-family: Arial, sans-serif;
+	font-size: 16px;
+	line-height: 1.5;
+	font-weight: normal; /* Or use 'bold' for emphasis */
+	letter-spacing: 1.5px;
 	margin: 0;
 	margin-bottom: 10px;
 }
