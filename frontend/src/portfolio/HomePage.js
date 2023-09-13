@@ -13,7 +13,7 @@ import Backend_Mark from "./images_downloads/Backend_Mark.jpg";
 import Teamwork from "./images_downloads/Teamwork.jpg";
 import coming_soon from "./images_downloads/coming_soon.jpg";
 
-import Navbar from "../Navbar";
+//import Navbar from "../Navbar";
 
 /*
 <a target="_blank" href={Ethan_Gordon_Resume}>
@@ -39,7 +39,6 @@ export default function HomePage() {
 
 	return (
 		<div className="main">
-			<Navbar />
 			<div className="container">
 				<div className="logo">
 					<a href="https://github.com/ethang404">
@@ -58,15 +57,28 @@ export default function HomePage() {
 				</div>
 			</div>
 			<h2 className="main-header">Hi I'm Ethan Gordon</h2>
-			<h4 className="second-header">Software Developer</h4>
+			<h4 className="second-header">Software Developer/Software Engineer</h4>
 			<section className="about-me">
 				<img src={Picture_of_me} alt="Pic" className="Pic"></img>
 				<div className="about-me-info">
 					<h4>About Me</h4>
-					<p>I am a software developer and some other stuff about why I'm doing this</p>
 					<p>
-						My hobbies are also hiking and video games. Please recommend me some hiking spots that!
+						I am a Software Engineer at Bryan Research and Engineering in Bryan/College station. I
+						graduated from Texas Tech University with a Bachelors in Computer Science and a Minors
+						in Mathematics.
 					</p>
+					<p>
+						I really enjoy learning new things and getting to put in effort to see my projects come
+						to life. In everyday life I think "what do I wish existed?", in some cases it's been a
+						Navigational app for my Mom, in others it's been a youtube watch party app to watch
+						youtube with my friends. I find that I lack a sort of "pretty" creativeness; I never
+						know what color scheme or layout I want even if I can design it(you might get that
+						impression from this website and subsequent projects as I lean much more into backend).
+						I find that my creative outlet tends to be new ideas-usually much too ambitious! All the
+						same I've come to love the entire process of developing fullstack applications
+					</p>
+
+					<p>Please check my projects out below!</p>
 				</div>
 			</section>
 
@@ -78,8 +90,13 @@ export default function HomePage() {
 					<a href="/Project/To-do-login">Click here to see</a>
 				</div>
 				<div className="project">
-					<h4>Project number x</h4>
-					<p>This is project num 2 description</p>
+					<h4>Youtube WatchRoom Project</h4>
+					<p>
+						This youtube watchroom project allows you to join a room with multiple friends and watch
+						youtube videos at the same time. This is accomplished via websockets specifically
+						Socket.IO. I've deployed the frontend to Netlify(React.js) and the backend(Node.js) to
+						AWS EC2 instance.
+					</p>
 					<a href="/Project/YoutubeApp/Login/">Click here to see</a>
 				</div>
 			</section>
