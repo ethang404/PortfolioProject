@@ -17,9 +17,6 @@ async function refreshAccessToken(refreshToken) {
 		const accessToken = response.data.access_token;
 		console.log("Grabbing a new access token");
 		console.log("New accessToken: ", accessToken);
-		// Optionally, you can also receive a new refresh token if the previous one has expired
-
-		// Return the new access token
 		return accessToken;
 	} catch (error) {
 		console.error("Error refreshing access token:", error);
@@ -150,11 +147,11 @@ router.get("/loadWatchList", verifyToken, (req, res) => {
 	console.log("I am now in loadWatchList---------------------------");
 	console.log("current accessToken in loadWatchList: ", req.cookies.accessToken);
 
-	console.log("loading current watchObjectList: ", watchObject);
+	console.log("loading current watchObjectList: ", req.session.roomData);
 	let tempRoom = req.headers.room;
-	if (tempRoom in watchObject) {
-		console.log("this is what im sending back: ", watchObject[tempRoom]);
-		res.send(watchObject[tempRoom]); //send back as 23: {videoList:[tyler1,speedy],1}
+	if (tempRoom in req.session.roomData) {
+		console.log("this is what im sending back: ", req.session.roomData[tempRoom]);
+		res.send(req.session.roomData[tempRoom]); //send back as 23: {videoList:[tyler1,speedy],1}
 	} else {
 		res.send(); //return nothing?
 	}
@@ -173,6 +170,7 @@ var returnRouter = function (io) {
 			console.log(data);
 
 			//add socket.emit to return watchObject data to the new user when joining an already filld room
+			//I dont think this is called
 			if (Object.keys(watchObject).length > 0) {
 				console.log("new-user: " + watchObject[data]);
 				socket.to(data.room).emit("new-user", data);
@@ -201,22 +199,25 @@ var returnRouter = function (io) {
 			console.log("my-Data(videoId): ", data.videoId);
 			console.log("my-room: ", data.room);
 
-			//add to watchObject to send to users whom join late
-
-			if (watchObject[data.room] == null) {
-				//watchObject[data.room] = []; //change to 23 : {watchList: [tyler1,speedy], videoCount: 0}
-				watchObject[data.room] = { videoList: [], videoCount: 0 };
+			//add to roomData to send to users whom join late
+			if (!req.session.roomData) {
+				req.session.roomData = {}; // Initialize roomData if it doesn't exist
 			}
 
-			watchObject[data.room].videoList.push(data.videoId);
-			console.log("searchVideo: ", watchObject);
+			if (req.session.roomData[data.room] == null) {
+				//req.session.roomData[data.room] = []; //change to 23 : {watchList: [tyler1,speedy], videoCount: 0}
+				req.session.roomData[data.room] = { videoList: [], videoCount: 0 };
+			}
+
+			req.session.roomData[data.room].videoList.push(data.videoId);
+			console.log("searchVideo: ", req.session.roomData);
 			//play video(video id) event to room
 			socket.to(data.room).emit("user-searched", data);
 		});
 		socket.on("skipVideo", (data) => {
 			console.log("my-roomSkippy: ", data);
 			//play video(video id) event to room
-			watchObject[data.room].videoCount = data.videoCount;
+			req.session.roomData[data.room].videoCount = data.videoCount;
 			//add room:videoCount
 			socket.to(data.room).emit("user-skipped", data);
 		});
