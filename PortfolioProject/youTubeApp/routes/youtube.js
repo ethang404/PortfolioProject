@@ -153,7 +153,36 @@ router.get("/testingURL", (req, res) => {
 	res.send(JSON.stringify(accessToken));
 });
 
-var watchObject = {}; //could also store in session?
+var watchObject = {
+	videoList: [],
+	videoCount: 0,
+}; //could also store in session?
+
+router.get("/updateSearchSession", verifyToken, (req, res) => {
+	//Delete old session if it exists and is expired
+	const currentTime = Date.now();
+	try {
+		if (
+			//problem with sessions expiring mid use? What happens then? Logout? Reuturn Logout to frontend?
+			req.session.roomData &&
+			currentTime - req.session.roomData.timestamp > req.session.cookie.maxAge
+		) {
+			// Session variable has expired, so delete it(lasts one hour)
+			delete req.session.roomData;
+			delete req.session; //might remove later?
+		}
+		for (const element of watchObject.videoList) {
+			//copy element from watchObject.videoList to session data
+			req.session.roomData[req.headers.room].videoList.push(element);
+		}
+		watchObject.videoList = []; //clear videoList
+		res.status(200).send("Updated Session info");
+	} catch (e) {
+		res.status(500).send("Error with updating session info from watchObject");
+	}
+
+	//req.session.roomData[req.headers.room].videoList = watchObject.videoList;
+});
 
 router.get("/loadWatchList", verifyToken, (req, res) => {
 	console.log("I am now in loadWatchList---------------------------");
@@ -234,18 +263,10 @@ var returnRouter = function (io) {
 			console.log("my-Data(videoId): ", data.videoId);
 			console.log("my-room: ", data.room);
 
-			//add to roomData to send to users whom join late
-			if (!req.session.roomData) {
-				req.session.roomData = {}; // Initialize roomData if it doesn't exist
-			}
+			watchObject[data.room].videoList.push(data.videoId); //store videoId we're adding in temp object
 
-			if (req.session.roomData[data.room] == null) {
-				//req.session.roomData[data.room] = []; //change to 23 : {watchList: [tyler1,speedy], videoCount: 0}
-				req.session.roomData[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
-			}
-
-			req.session.roomData[data.room].videoList.push(data.videoId);
-			console.log("searchVideo: ", req.session.roomData);
+			//req.session.roomData[data.room].videoList.push(data.videoId);
+			console.log("searchVideo: ", data.videoId);
 			console.log("my data: ", data);
 			//play video(video id) event to room
 			socket.to(data.room).emit("user-searched", data);

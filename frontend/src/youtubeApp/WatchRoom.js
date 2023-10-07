@@ -140,6 +140,25 @@ export default function WatchRoom({ socket }) {
 				setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]); //here
 
 				socket.emit("searchVideo", { videoId: data[0].id.videoId, room: room });
+
+				try {
+					//call backend to update req.session variable with newly searched value(following socket event searchVideo on backend)
+					let resp = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/updateSearchSession`, {
+						method: "GET",
+						credentials: "include",
+						headers: {
+							"Content-Type": "application/json",
+							room: room,
+						},
+					});
+					if (resp.ok) {
+						console.log("Backend updated videoWatch List");
+					} else {
+						console.log("Error with Backend updated videoWatch List");
+					}
+				} catch (err) {
+					console.log("Fetch Error:", err);
+				}
 				/*
 				//setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]); //here
 				if (searchResponse && searchResponse.length > 0) {
