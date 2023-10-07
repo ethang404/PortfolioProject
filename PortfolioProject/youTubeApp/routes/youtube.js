@@ -129,6 +129,20 @@ router.get("/searchVideo", verifyToken, async (req, res) => {
 	}
 	//const accessToken = req.headers.authorization.split(" ")[1];
 });
+router.get("/logout", verifyToken, async (req, res) => {
+	//for some reason the req.cookies.accessToken is not being applied
+	console.log("logging user out");
+	try {
+		if (req.session.roomData) {
+			delete req.session.roomData;
+		}
+		res.status(200).send("Logged Out");
+	} catch (e) {
+		console.log("Error with performing logout request", e);
+		res.status(500).send("An error occurred while attempting to logout");
+	}
+	//const accessToken = req.headers.authorization.split(" ")[1];
+});
 
 router.get("/testingURL", (req, res) => {
 	let accessToken = req.cookies.accessToken;
@@ -169,6 +183,17 @@ var returnRouter = function (io) {
 			socket.join(data); //joins room
 			console.log(data);
 
+			//Delete old session if it exists
+			const currentTime = Date.now();
+
+			if (
+				req.session.roomData &&
+				currentTime - req.session.roomData.timestamp > req.session.cookie.maxAge
+			) {
+				// Session variable has expired, so delete it(lasts one hour)
+				delete req.session.roomData;
+			}
+
 			//add socket.emit to return watchObject data to the new user when joining an already filld room
 			//I dont think this is called
 			if (Object.keys(watchObject).length > 0) {
@@ -206,11 +231,12 @@ var returnRouter = function (io) {
 
 			if (req.session.roomData[data.room] == null) {
 				//req.session.roomData[data.room] = []; //change to 23 : {watchList: [tyler1,speedy], videoCount: 0}
-				req.session.roomData[data.room] = { videoList: [], videoCount: 0 };
+				req.session.roomData[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
 			}
 
 			req.session.roomData[data.room].videoList.push(data.videoId);
 			console.log("searchVideo: ", req.session.roomData);
+			console.log("my data: ", data);
 			//play video(video id) event to room
 			socket.to(data.room).emit("user-searched", data);
 		});

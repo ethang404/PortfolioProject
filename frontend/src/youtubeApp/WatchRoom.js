@@ -98,8 +98,26 @@ export default function WatchRoom({ socket }) {
 		});
 	}, [socket]);
 
-	function refreshToken() {
-		//call when accessToken expired..if refresh token expired-log out
+	async function logout() {
+		try {
+			let resp = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/logout`, {
+				method: "GET",
+				credentials: "include",
+				headers: {
+					"Content-Type": "application/json",
+				},
+			});
+
+			if (resp.ok) {
+				let data = await resp.json();
+				console.log("Logging user out");
+				<Navigate to="/Project/YoutubeApp/Login" />;
+			} else {
+				console.log("HTTP Error:", resp.status);
+			}
+		} catch (err) {
+			console.log("Fetch Error:", err);
+		}
 	}
 
 	async function searchYoutube() {
@@ -230,6 +248,9 @@ export default function WatchRoom({ socket }) {
 				}}
 			>
 				Skip
+			</button>
+			<button className="logoutButton" onClick={logout}>
+				Logout
 			</button>
 		</div>
 	);
