@@ -169,6 +169,13 @@ router.get("/loadWatchList", verifyToken, (req, res) => {
 		// Session variable has expired, so delete it(lasts one hour)
 		delete req.session.roomData;
 		delete req.session; //might remove later?
+	} else if (!req.session.roomData) {
+		req.session.roomData = {}; // Initialize roomData if it doesn't exist
+	}
+	//Initialize roomData[roomCode]
+	if (req.session.roomData[data.room] == null) {
+		//req.session.roomData[data.room] = []; //change to 23 : {watchList: [tyler1,speedy], videoCount: 0}
+		req.session.roomData[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
 	}
 
 	console.log("loading current watchObjectList: ", req.session.roomData);
