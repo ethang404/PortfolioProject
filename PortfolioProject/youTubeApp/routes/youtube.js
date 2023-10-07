@@ -173,9 +173,13 @@ router.get("/loadWatchList", verifyToken, (req, res) => {
 		req.session.roomData = {}; // Initialize roomData if it doesn't exist
 	}
 	//Initialize roomData[roomCode]
-	if (req.session.roomData[data.room] == null) {
+	if (req.session.roomData[req.headers.room] == null) {
 		//req.session.roomData[data.room] = []; //change to 23 : {watchList: [tyler1,speedy], videoCount: 0}
-		req.session.roomData[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
+		req.session.roomData[req.headers.room] = {
+			videoList: [],
+			videoCount: 0,
+			timestamp: Date.now(),
+		};
 	}
 
 	console.log("loading current watchObjectList: ", req.session.roomData);
