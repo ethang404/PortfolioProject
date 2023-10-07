@@ -9,6 +9,7 @@ import { useNavigate, useParams } from "react-router-dom";
 //var socket = io.connect();
 
 export default function WatchRoom({ socket }) {
+	const navigate = useNavigate();
 	const { room } = useParams();
 	const playerRef = useRef();
 	const [videoSearch, setVideoSearch] = useState("");
