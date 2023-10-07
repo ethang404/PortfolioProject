@@ -84,8 +84,8 @@ export default function HomePage() {
 
 			<section className="projects-container">
 				<div className="project">
-					<h4>Project number x</h4>
-					<p>This is project num 1 description</p>
+					<h4>Todo List Application</h4>
+					<p>This was my first ever fully independent</p>
 					<p></p>
 					<a href="/Project/To-do-login">Click here to see</a>
 				</div>
