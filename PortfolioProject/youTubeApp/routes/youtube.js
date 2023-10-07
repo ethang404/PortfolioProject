@@ -171,9 +171,12 @@ router.get("/updateSearchSession", verifyToken, (req, res) => {
 			delete req.session.roomData;
 			delete req.session; //might remove later?
 		}
-		for (const element of watchObject.videoList) {
-			//copy element from watchObject.videoList to session data
-			req.session.roomData[req.headers.room].videoList.push(element);
+		if (watchObject) {
+			console.log();
+			for (const element of watchObject.videoList) {
+				//copy element from watchObject.videoList to session data
+				req.session.roomData[req.headers.room].videoList.push(element);
+			}
 		}
 		watchObject.videoList = []; //clear videoList
 		res.status(200).send("Updated Session info");
