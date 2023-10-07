@@ -111,7 +111,7 @@ export default function WatchRoom({ socket }) {
 			if (resp.ok) {
 				let data = await resp.json();
 				console.log("Logging user out");
-				<Navigate to="/Project/YoutubeApp/Login" />;
+				navigate("/Project/YoutubeApp/Login/");
 			} else {
 				console.log("HTTP Error:", resp.status);
 			}
