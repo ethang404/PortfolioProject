@@ -135,6 +135,7 @@ router.get("/logout", verifyToken, async (req, res) => {
 	try {
 		if (req.session.roomData) {
 			delete req.session.roomData;
+			delete req.session; //might remove later?
 		}
 		res.status(200).send("Logged Out");
 	} catch (e) {
@@ -155,11 +156,20 @@ router.get("/testingURL", (req, res) => {
 var watchObject = {}; //could also store in session?
 
 router.get("/loadWatchList", verifyToken, (req, res) => {
-	//sessions dont work. I have to store on frontend and pass to backend
-
-	//cookies get sent to frontend :/
 	console.log("I am now in loadWatchList---------------------------");
 	console.log("current accessToken in loadWatchList: ", req.cookies.accessToken);
+
+	//Delete old session if it exists and is expired
+	const currentTime = Date.now();
+
+	if (
+		req.session.roomData &&
+		currentTime - req.session.roomData.timestamp > req.session.cookie.maxAge
+	) {
+		// Session variable has expired, so delete it(lasts one hour)
+		delete req.session.roomData;
+		delete req.session; //might remove later?
+	}
 
 	console.log("loading current watchObjectList: ", req.session.roomData);
 	let tempRoom = req.headers.room;
@@ -182,17 +192,6 @@ var returnRouter = function (io) {
 			console.log("Joining room: " + data);
 			socket.join(data); //joins room
 			console.log(data);
-
-			//Delete old session if it exists
-			const currentTime = Date.now();
-
-			if (
-				req.session.roomData &&
-				currentTime - req.session.roomData.timestamp > req.session.cookie.maxAge
-			) {
-				// Session variable has expired, so delete it(lasts one hour)
-				delete req.session.roomData;
-			}
 
 			//add socket.emit to return watchObject data to the new user when joining an already filld room
 			//I dont think this is called
