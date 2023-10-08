@@ -34,7 +34,7 @@ app.use(
 			httpOnly: true,
 			sameSite: "None", //added this
 			secure: true, //changed to true
-			maxAge: 3600000, // 24 hours
+			maxAge: 8640000, // 24 hours
 		},
 	})
 );

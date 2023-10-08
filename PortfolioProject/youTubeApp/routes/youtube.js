@@ -66,7 +66,7 @@ async function verifyToken(req, res, next) {
 			}
 
 			res.cookie("accessToken", refreshedToken, {
-				maxAge: 24 * 60 * 60 * 1000,
+				maxAge: 8640000,
 				httpOnly: true,
 			}); // 1 day
 			next();
@@ -232,10 +232,7 @@ var returnRouter = function (io) {
 				watchObject[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
 			}
 
-			if (req.session.roomData[data.room] == null) {
-				//req.session.roomData[data.room] = []; //change to 23 : {watchList: [tyler1,speedy], videoCount: 0}
-				req.session.roomData[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
-			}
+			watchObject[data.room].videoList.push(data.videoId); //store videoId we're adding in temp object
 
 			console.log("searchVideo: ", data.videoId);
 			console.log("my data: ", data);
