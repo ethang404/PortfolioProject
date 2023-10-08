@@ -109,7 +109,6 @@ export default function WatchRoom({ socket }) {
 			});
 
 			if (resp.ok) {
-				let data = await resp.json();
 				console.log("Logging user out");
 				navigate("/Project/YoutubeApp/Login/");
 			} else {
