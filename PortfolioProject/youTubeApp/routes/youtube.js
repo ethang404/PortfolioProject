@@ -170,11 +170,11 @@ router.get("/loadWatchList", verifyToken, verifyWatchObject, (req, res) => {
 	console.log("I am now in loadWatchList---------------------------");
 	console.log("current accessToken in loadWatchList: ", req.cookies.accessToken);
 
-	console.log("loading current watchObjectList: ", watchObject[roomData]);
+	console.log("loading current watchObjectList: ", watchObject[req.headers.room]);
 	let tempRoom = req.headers.room;
-	if (watchObject[data.room] == null || watchObject[data.room] == undefined) {
+	if (watchObject[tempRoom] == null || watchObject[tempRoom] == undefined) {
 		console.log("init watchObject in skipVideo");
-		watchObject[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
+		watchObject[tempRoom] = { videoList: [], videoCount: 0, timestamp: Date.now() };
 	}
 
 	if (tempRoom in watchObject) {
