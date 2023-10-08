@@ -66,7 +66,7 @@ async function verifyToken(req, res, next) {
 			}
 
 			res.cookie("accessToken", refreshedToken, {
-				maxAge: 24 * 60 * 60 * 1000,
+				maxAge: 8640000,
 				httpOnly: true,
 			}); // 1 day
 			next();
@@ -153,10 +153,7 @@ router.get("/testingURL", (req, res) => {
 	res.send(JSON.stringify(accessToken));
 });
 
-var watchObject = {
-	videoList: [],
-	videoCount: 0,
-}; //could also store in session?
+var watchObject = {}; //could also store in session?
 
 router.get("/updateSearchSession", verifyToken, (req, res) => {
 	//Delete old session if it exists and is expired
@@ -177,6 +174,7 @@ router.get("/updateSearchSession", verifyToken, (req, res) => {
 				//copy element from watchObject.videoList to session data
 				req.session.roomData[req.headers.room].videoList.push(element);
 			}
+			req.session.roomData[req.headers.room].videoCount = watchObject[req.headers.room].videoCount; //update videoCount from skip
 		}
 		watchObject.videoList = []; //clear videoList
 		res.status(200).send("Updated Session info");
@@ -266,6 +264,10 @@ var returnRouter = function (io) {
 			console.log("my-Data(videoId): ", data.videoId);
 			console.log("my-room: ", data.room);
 
+			if (watchObject[data.room] == null || watchObject[data.room] == undefined) {
+				watchObject[data.room] = { videoList: [], videoCount: 0 };
+			}
+
 			watchObject[data.room].videoList.push(data.videoId); //store videoId we're adding in temp object
 
 			//req.session.roomData[data.room].videoList.push(data.videoId);
@@ -276,9 +278,13 @@ var returnRouter = function (io) {
 		});
 		socket.on("skipVideo", (data) => {
 			console.log("my-roomSkippy: ", data);
+			if (watchObject[data.room] == null || watchObject[data.room] == undefined) {
+				watchObject[data.room] = { videoList: [], videoCount: 0 };
+			}
 			//play video(video id) event to room
-			req.session.roomData[data.room].videoCount = data.videoCount;
+			//req.session.roomData[data.room].videoCount = data.videoCount;
 			//add room:videoCount
+			watchObject[data.room].videoCount = data.videoCount;
 			socket.to(data.room).emit("user-skipped", data);
 		});
 	});
