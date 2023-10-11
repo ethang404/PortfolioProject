@@ -153,7 +153,7 @@ export default function WatchRoom({ socket }) {
 					if (resp.ok) {
 						console.log("Backend updated videoWatch List");
 					} else {
-						console.log("Error with Backend updated videoWatch List");
+						console.log("Error with Backend updated videoWatch List");//What to do in the case it's a bad search?
 					}
 				} catch (err) {
 					console.log("Fetch Error:", err);
