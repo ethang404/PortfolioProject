@@ -58,27 +58,35 @@ export default function HomePage() {
 			</div>
 			<h2 className="main-header">Hi I'm Ethan Gordon</h2>
 			<h4 className="second-header">Software Developer/Software Engineer</h4>
+			<a className="my-resume" href={Ethan_Gordon_Resume} target="_blank" rel="noopener noreferrer">
+				Click me to Download Resume!
+			</a>
 			<section className="about-me">
 				<img src={Picture_of_me} alt="Pic" className="Pic"></img>
 				<div className="about-me-info">
 					<h4>About Me</h4>
+
 					<p>
-						I am a Software Engineer at Bryan Research and Engineering in Bryan/College station. I
-						graduated from Texas Tech University with a Bachelors in Computer Science and a Minors
-						in Mathematics.
-					</p>
-					<p>
-						I really enjoy learning new things and getting to put in effort to see my projects come
-						to life. In everyday life I think "what do I wish existed?", in some cases it's been a
-						Navigational app for my Mom, in others it's been a youtube watch party app to watch
-						youtube with my friends. I find that I lack a sort of "pretty" creativeness; I never
-						know what color scheme or layout I want even if I can design it(you might get that
-						impression from this website and subsequent projects as I lean much more into backend).
-						I find that my creative outlet tends to be new ideas-usually much too ambitious! All the
-						same I've come to love the entire process of developing fullstack applications
+						I particularly enjoy backend and database design, where I find joy in creating solutions
+						that blend functionality and efficiency.
 					</p>
 
-					<p>Please check my projects out below!</p>
+					<p>
+						Eager to broaden my skill set, I've ventured into frontend development, ensuring a
+						well-rounded expertise in crafting end-to-end solutions. My commitment to versatility is
+						mirrored in the full-stack nature of many of my personal projects.
+					</p>
+
+					<p>
+						Outside the lines of code, you'll find me fueled by a genuine passion for learning. I'm
+						on a perpetual quest to absorb new knowledge and skills, always seeking to push the
+						boundaries of what I can achieve. Whether it's a project that enhances my own life or
+						contributes to the well-being of others, I believe in the power of software engineering
+						to bring about meaningful change. Join me on this exciting journey of innovation and
+						growth. Let's build something extraordinary together!
+					</p>
+
+					<h4>Please check my projects out below!</h4>
 				</div>
 			</section>
 
