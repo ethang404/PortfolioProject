@@ -28,7 +28,6 @@ const socket = io.connect("https://youtubebackend.com/", {
 function App() {
 	return (
 		<div className="App">
-			<Navbar />
 			<Router basename="/">
 				<Routes>
 					<Route path="/" element={<HomePage />}></Route>

@@ -13,7 +13,7 @@ import Backend_Mark from "./images_downloads/Backend_Mark.jpg";
 import Teamwork from "./images_downloads/Teamwork.jpg";
 import coming_soon from "./images_downloads/coming_soon.jpg";
 
-//import Navbar from "../Navbar";
+import Navbar from "../Navbar";
 
 /*
 <a target="_blank" href={Ethan_Gordon_Resume}>
@@ -39,28 +39,37 @@ export default function HomePage() {
 
 	return (
 		<div className="main">
-			<div className="container">
-				<div className="logo">
-					<a href="https://github.com/ethang404">
-						<img src={GitHub_Mark} alt="Github Logo" />
-					</a>
-				</div>
-				<div className="logo">
-					<a href="https://www.linkedin.com/in/ethan-gordon-2b564923b">
-						<img src={linked_in} alt="LinkedIn Logo" />
-					</a>
-				</div>
-				<div className="logo">
-					<a href="mailto:ethangordon25@gmail.com">
-						<img src={mail} alt="Mail Logo" />
+			<div className="introduction">
+				<div className="introduction-text">
+					<h2 className="main-header">Hi, I'm Ethan Gordon</h2>
+					<h4 className="second-header">Software Engineer</h4>
+					<div className="container">
+						<div className="logo">
+							<a href="https://github.com/ethang404">
+								<img src={GitHub_Mark} alt="Github Logo" />
+							</a>
+						</div>
+						<div className="logo">
+							<a href="https://www.linkedin.com/in/ethan-gordon-2b564923b">
+								<img src={linked_in} alt="LinkedIn Logo" />
+							</a>
+						</div>
+						<div className="logo">
+							<a href="mailto:ethangordon25@gmail.com">
+								<img src={mail} alt="Mail Logo" />
+							</a>
+						</div>
+					</div>
+					<a
+						className="my-resume"
+						href={Ethan_Gordon_Resume}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						Resume
 					</a>
 				</div>
 			</div>
-			<h2 className="main-header">Hi I'm Ethan Gordon</h2>
-			<h4 className="second-header">Software Developer/Software Engineer</h4>
-			<a className="my-resume" href={Ethan_Gordon_Resume} target="_blank" rel="noopener noreferrer">
-				Click me to Download Resume!
-			</a>
 			<section className="about-me">
 				<img src={Picture_of_me} alt="Pic" className="Pic"></img>
 				<div className="about-me-info">
@@ -86,29 +95,29 @@ export default function HomePage() {
 						growth. Let's build something extraordinary together!
 					</p>
 
-					<h4>Please check my projects out below!</h4>
+					<h4>Check my projects out below!</h4>
 				</div>
 			</section>
-
-			<section className="projects-container">
-				<div className="project">
-					<h4>Todo List Application</h4>
-					<p>This was my first ever fully independent</p>
-					<p></p>
-					<a href="/Project/To-do-login">Click here to see</a>
-				</div>
-				<div className="project">
-					<h4>Youtube WatchRoom Project</h4>
-					<p>
-						This youtube watchroom project allows you to join a room with multiple friends and watch
-						youtube videos at the same time. This is accomplished via websockets specifically
-						Socket.IO. I've deployed the frontend to Netlify(React.js) and the backend(Node.js) to
-						AWS EC2 instance.
-					</p>
-					<a href="/Project/YoutubeApp/Login/">Click here to see</a>
-				</div>
+			<section className="projects-background">
+				<section className="projects-container">
+					<div className="project">
+						<h4>Todo List Application</h4>
+						<p>This was my first ever fully independent</p>
+						<p></p>
+						<a href="/Project/To-do-login">Click here to see</a>
+					</div>
+					<div className="project">
+						<h4>Youtube WatchRoom Project</h4>
+						<p>
+							This youtube watchroom project allows you to join a room with multiple friends and
+							watch youtube videos at the same time. This is accomplished via websockets
+							specifically Socket.IO. I've deployed the frontend to Netlify(React.js) and the
+							backend(Node.js) to AWS EC2 instance.
+						</p>
+						<a href="/Project/YoutubeApp/Login/">Click here to see</a>
+					</div>
+				</section>
 			</section>
-
 			<section className="skills-container">
 				<ul>
 					<li>

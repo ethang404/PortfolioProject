@@ -7,6 +7,7 @@ import jwt_decode from "jwt-decode";
 import google_logo from "./images/google_logo.png";
 
 import YouTubeHomePage from "./Homepage";
+
 import "./Login.css";
 
 export default function Login() {
@@ -79,7 +80,7 @@ export default function Login() {
 	}
 	//<a href="https://youtubebackend.com/auth/google">Click me</a>
 	return (
-		<div>
+		<div className="main-container">
 			<div id="SignIn"></div>
 
 			<a href="https://youtubebackend.com/auth/google" class="google-button">
