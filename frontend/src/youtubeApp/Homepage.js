@@ -85,8 +85,6 @@ export default function Homepage({ socket }) {
 				<button className="homepage-button" onClick={handleJoinRoom}>
 					Join Room
 				</button>
-
-				<button onClick={tempFunc}>Temp Button!</button>
 			</div>
 		</div>
 	);

@@ -4,7 +4,10 @@ import { useParams, useNavigate, Routes, Route, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 
+import google_logo from "./images/google_logo.png";
+
 import YouTubeHomePage from "./Homepage";
+import "./Login.css";
 
 export default function Login() {
 	const navigate = useNavigate();
@@ -74,12 +77,15 @@ export default function Login() {
 		//	<Navigate to="https://accounts.google.com/o/oauth2/auth?response_type=token&scope=https://www.googleapis.com/auth/youtube&redirect_uri=http://localhost:3000/Project/YoutubeApp/Home&client_id=97845079356-jftb8q0tkc7tkr36o9qpujpcp34a8sr5.apps.googleusercontent.com" />;
 		//const { access_token } = useParams();
 	}
-
+	//<a href="https://youtubebackend.com/auth/google">Click me</a>
 	return (
 		<div>
 			<div id="SignIn"></div>
 
-			<a href="https://youtubebackend.com/auth/google">Click me</a>
+			<a href="https://youtubebackend.com/auth/google" class="google-button">
+				<img src={google_logo} alt="Google Logo" class="google-logo" />
+				<span>Sign in with Google</span>
+			</a>
 		</div>
 	);
 }

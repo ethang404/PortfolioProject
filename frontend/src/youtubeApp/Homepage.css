@@ -25,6 +25,10 @@
 	align-items: center;
 }
 
+.homepage-form label {
+	color: #333333;
+}
+
 .homepage-input {
 	margin-right: 1rem;
 	padding: 0.5rem;
