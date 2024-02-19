@@ -37,7 +37,7 @@ router.get("/success", (req, res) => {
 	/*res.redirect(
 		"http://localhost:3000/Project/YoutubeApp/Home?accessToken=" + req.session.accessToken
 	);*/
-	res.redirect("https://legendary-gecko-c5294f.netlify.app/Project/YoutubeApp/Home");
+	res.redirect("https://ethan-gordon.netlify.app/Project/YoutubeApp/Home");
 });
 router.get("/error", (req, res) => res.send("error logging in"));
 
