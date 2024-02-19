@@ -7,7 +7,7 @@ export default function Navbar() {
 			<nav className="Nav">
 				<ul className="Nav-elements">
 					<li>
-						<a href="https://legendary-gecko-c5294f.netlify.app/">Home</a>
+						<a href="https://ethan-gordon.netlify.app/">Home</a>
 					</li>
 					<li>
 						<a href="/Projects">Projects</a>

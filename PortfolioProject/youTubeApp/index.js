@@ -21,7 +21,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors"); //install cors
 app.use(
 	cors({
-		origin: "https://legendary-gecko-c5294f.netlify.app",
+		origin: "https://ethan-gordon.netlify.app",
 		credentials: true,
 	})
 );
@@ -45,7 +45,7 @@ app.use(cookieParser());
 
 const io = new Server(server, {
 	cors: {
-		origin: "https://legendary-gecko-c5294f.netlify.app",
+		origin: "https://ethan-gordon.netlify.app",
 		methods: ["GET", "POST"],
 		credentials: true,
 	},
