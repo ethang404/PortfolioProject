@@ -83,7 +83,7 @@ export default function Login() {
 		<div className="main-container">
 			<div id="SignIn"></div>
 
-			<a href="https://youtubebackend.com/auth/google" class="google-button">
+			<a href={process.env.REACT_APP_BACKEND_URL + "/auth/google"} class="google-button">
 				<img src={google_logo} alt="Google Logo" class="google-logo" />
 				<span>Sign in with Google</span>
 			</a>

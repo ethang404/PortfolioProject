@@ -14,6 +14,7 @@ async function refreshAccessToken(refreshToken) {
 		});
 
 		// The response will contain a new access token
+		console.log("Old accessToken(in refreshAccessToken): ", req.cookies.accessToken);
 		const accessToken = response.data.access_token;
 		console.log("Grabbing a new access token");
 		console.log("New accessToken: ", accessToken);
@@ -54,7 +55,7 @@ async function verifyToken(req, res, next) {
 		if (
 			//if token is invalid: refresh token
 			error.response &&
-			error.response.status === 400 &&
+			(error.response.status === 400 || error.response.status === 401) &&
 			error.response.data.error === "invalid_token"
 		) {
 			console.log("my refreshToken: ", req.cookies.refreshToken); //refreshToken is undefined

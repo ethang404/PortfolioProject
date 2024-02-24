@@ -20,11 +20,7 @@ import io from "socket.io-client";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 
-const socket = io.connect("https://youtubebackend.com/", {
-	extraHeaders: {
-		"Access-Control-Allow-Credentials": "true",
-	},
-});
+const socket = io.connect(process.env.REACT_APP_BACKEND_URL);
 function App() {
 	return (
 		<div className="App">

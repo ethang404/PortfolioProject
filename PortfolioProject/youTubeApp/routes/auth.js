@@ -9,13 +9,20 @@ const axios = require("axios");
 const router = express.Router();
 
 router.get("/success", (req, res) => {
-	console.log("access: ", req.user.accessToken);
+	const sessionData = JSON.parse(Object.values(req.sessionStore.sessions)[0]);
+	const accessToken = sessionData.passport.user.accessToken;
+	const refreshToken = sessionData.passport.user.refreshToken;
+	console.log(accessToken);
+	console.log(refreshToken);
+	console.log("My accessToken: ", accessToken);
+	console.log("My refreshToken: ", refreshToken);
+	//console.log("access: ", req.user.accessToken);
 	// Save accessToken in session
-	req.session.accessToken = req.user.accessToken;
+	req.session.accessToken = accessToken;
 	console.log("session object:", req.session.accessToken);
 
 	console.log("myVal", req.isAuthenticated());
-	res.cookie("accessToken", req.user.accessToken, {
+	res.cookie("accessToken", accessToken, {
 		maxAge: 24 * 60 * 60 * 1000,
 		sameSite: "None", // Adjust sameSite and secure attributes as needed
 		secure: true,
@@ -25,9 +32,8 @@ router.get("/success", (req, res) => {
 	console.log(req.cookies.accessToken);
 
 	console.log("saving refreshToken.. ");
-	console.log(req.user);
 	//httpOnly:true below
-	res.cookie("refreshToken", req.user.refreshToken, {
+	res.cookie("refreshToken", refreshToken, {
 		maxAge: 24 * 60 * 60 * 1000,
 		sameSite: "None", // Adjust sameSite and secure attributes as needed
 		secure: true,
@@ -37,7 +43,7 @@ router.get("/success", (req, res) => {
 	/*res.redirect(
 		"http://localhost:3000/Project/YoutubeApp/Home?accessToken=" + req.session.accessToken
 	);*/
-	res.redirect("https://ethan-gordon.netlify.app/Project/YoutubeApp/Home");
+	res.redirect(process.env.REDIRECT_URI + "/Project/YoutubeApp/Home");
 });
 router.get("/error", (req, res) => res.send("error logging in"));
 
@@ -58,7 +64,7 @@ router.get(
 	passport.authenticate("google", { failureRedirect: "/auth/error" }),
 	function (req, res) {
 		// This function is called after the user grants permission and the authorization code is exchanged for an access token
-		res.redirect("https://youtubebackend.com/auth/success");
+		res.redirect(process.env.BACKEND_URL + "/auth/success");
 		//res.redirect("http://localhost:3000/Project/YoutubeApp/Home");
 	}
 );

@@ -15,13 +15,6 @@ import coming_soon from "./images_downloads/coming_soon.jpg";
 
 import Navbar from "../Navbar";
 
-/*
-<a target="_blank" href={Ethan_Gordon_Resume}>
-							Click here for my Resume!
-						</a>
-
-*/
-
 export default function HomePage() {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");
@@ -101,10 +94,13 @@ export default function HomePage() {
 			<section className="projects-background">
 				<section className="projects-container">
 					<div className="project">
-						<h4>Todo List Application</h4>
-						<p>This was my first ever fully independent</p>
-						<p></p>
-						<a href="/Project/To-do-login">Click here to see</a>
+						<h4>Birthday & Gift Helper(WIP)</h4>
+						<p>
+							[Work In Progress.] Will eventually be an react-native application to help people
+							track their friend's birthdays as well as gift ideas for them. This app will send text
+							reminders to people about upcoming birthdays and use a reccomendation model to suggest
+							gift ideas based on their likes.
+						</p>
 					</div>
 					<div className="project">
 						<h4>Youtube WatchRoom Project</h4>
