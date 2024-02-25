@@ -4,6 +4,18 @@ const express = require("express");
 const router = express.Router();
 const axios = require("axios");
 
+class AccessTokenManager {
+	static accessToken = null;
+
+	static setAccessToken(token) {
+		AccessTokenManager.accessToken = token;
+	}
+
+	static getAccessToken() {
+		return AccessTokenManager.accessToken;
+	}
+}
+
 async function refreshAccessToken(refreshToken) {
 	try {
 		const response = await axios.post("https://oauth2.googleapis.com/token", {
@@ -14,7 +26,7 @@ async function refreshAccessToken(refreshToken) {
 		});
 
 		// The response will contain a new access token
-		console.log("Old accessToken(in refreshAccessToken): ", req.cookies.accessToken);
+		//console.log("Old accessToken(in refreshAccessToken): ", req.cookies.accessToken);
 		const accessToken = response.data.access_token;
 		console.log("Grabbing a new access token");
 		console.log("New accessToken: ", accessToken);
@@ -51,6 +63,7 @@ async function verifyToken(req, res, next) {
 			next();
 		}
 	} catch (error) {
+		console.log("RequestObject in verifyToken: ", req);
 		// Check if the error response is for an invalid token
 		if (
 			//if token is invalid: refresh token
@@ -58,7 +71,9 @@ async function verifyToken(req, res, next) {
 			(error.response.status === 400 || error.response.status === 401) &&
 			error.response.data.error === "invalid_token"
 		) {
-			console.log("my refreshToken: ", req.cookies.refreshToken); //refreshToken is undefined
+			//console.log("my refreshToken: ", req.cookies.refreshToken); //refreshToken is undefined
+			console.log("my old accessToken in verifyToken: ", req.cookies.accessToken);
+
 			const refreshedToken = await refreshAccessToken(req.cookies.refreshToken);
 			console.log("new my accessToken: ", refreshedToken);
 			if (!refreshedToken) {
@@ -69,7 +84,15 @@ async function verifyToken(req, res, next) {
 			res.cookie("accessToken", refreshedToken, {
 				maxAge: 8640000,
 				httpOnly: true,
+				sameSite: "None",
+				secure: true,
 			}); // 1 day
+
+			//update class variable for accessToken to pass to search function
+			AccessTokenManager.setAccessToken(refreshedToken);
+
+			console.log("My New accessToken in verifyToken(from cookie): ", req.cookies.accessToken);
+
 			next();
 			return;
 			//console.log("Token verification failed: Invalid token");
@@ -85,7 +108,15 @@ async function verifyToken(req, res, next) {
 async function test(req) {
 	const q = req.headers.q;
 
-	console.log("myAccessToken in test: ", req.cookies.accessToken);
+	let accessToken = null;
+
+	if (AccessTokenManager.getAccessToken()) {
+		console.log("myAccessToken in test(token is refreshed): ", AccessTokenManager.getAccessToken());
+		accessToken = AccessTokenManager.getAccessToken();
+	} else {
+		console.log("myAccessToken in test: ", req.cookies.accessToken);
+		accessToken = req.cookies.accessToken;
+	}
 	console.log("your query is:", q);
 	console.log(
 		"full call is: ",
@@ -96,20 +127,19 @@ async function test(req) {
 			"https://www.googleapis.com/youtube/v3/search?q=" + q + "&type=video",
 			{
 				headers: {
-					Authorization: `Bearer ${req.cookies.accessToken}`,
+					Authorization: `Bearer ${accessToken}`,
 				},
 			}
 		);
+
+		//reset accessToken class variable to null to be able to check again later
+		AccessTokenManager.setAccessToken(null);
 		return response.data.items;
 	} catch (e) {
 		console.log("Something went wrong with searching..", e);
 		//what happens if I do res.send(500) here?
 		throw new Error("An error occurred in search function", e);
 	}
-
-	console.log("success!!!: ", response.data);
-	console.log("testing first val: ", response.data.items[0].id);
-	return response.data.items;
 }
 function verifyWatchObject(req, res, next) {
 	const currentTime = Date.now();
