@@ -15,13 +15,6 @@ import coming_soon from "./images_downloads/coming_soon.jpg";
 
 import Navbar from "../Navbar";
 
-/*
-<a target="_blank" href={Ethan_Gordon_Resume}>
-							Click here for my Resume!
-						</a>
-
-*/
-
 export default function HomePage() {
 	const [name, setName] = useState("");
 	const [email, setEmail] = useState("");

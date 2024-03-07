@@ -14,8 +14,9 @@ export default function WatchRoom({ socket }) {
 	const playerRef = useRef();
 	const [videoSearch, setVideoSearch] = useState("");
 	const [searchResponse, setSearchResponse] = useState([]);
+	const [fullSearchResponse, setFullSearchResponse] = useState([]);
 	const [videoCount, setVideoCount] = useState(0);
-
+	//think I need a different setup to store elements of videos
 	const [currentTime, setCurrentTime] = useState(0.0);
 
 	useEffect(() => {
@@ -27,6 +28,16 @@ export default function WatchRoom({ socket }) {
 	useEffect(() => {
 		playerRef.current.internalPlayer.seekTo(currentTime); //this is crazy bugged for some reason
 	}, [currentTime]);
+
+	useEffect(() => {
+		console.log(fullSearchResponse);
+		//fullSearchResponse.map((video) => console.log(video.thumbnail));
+	}, [fullSearchResponse]);
+
+	useEffect(() => {
+		console.log("Updated Search Response: ");
+		console.log(searchResponse);
+	}, [searchResponse]);
 
 	async function loadWatchList() {
 		//Here add error handling where if accessToken is bad and refreshToken cannot get new one on backend
@@ -45,36 +56,52 @@ export default function WatchRoom({ socket }) {
 		});
 		let data = await response.json();
 		console.log("whoop: ", data);
-		setSearchResponse(data.videoList); //also attach a videoCount variable so i know what index I'm on(video1 vs video2 in queue) for late join users/refreshes
+		let temp = data;
+		let temp2 = data.videoCount;
+		let temp3 = data.videosDetails;
+		console.log(temp);
+		console.log(temp2);
+		console.log(temp3);
+		//setSearchResponse(temp3);
+
+		const ids = data.videosDetails.map((video) => video.videoId);
+		setSearchResponse(ids);
+
+		setFullSearchResponse(temp3);
+		//setSearchResponse((oldArray) => [...oldArray, ...data.videosDetails]);
+		//setSearchResponse(data.videoList); //also attach a videoCount variable so i know what index I'm on(video1 vs video2 in queue) for late join users/refreshes
+		//setVideoCount(...data.videoCount);
 		setVideoCount(data.videoCount);
+
+		//I should also set the timestamp here to update new user's time
 	}
 
 	async function getTime(otherTime) {
-		let myTime = await playerRef.current.internalPlayer.getCurrentTime();
-		console.log("Within getTime funcion: ", myTime, "Other user's time: ", otherTime);
-		if (Math.abs(myTime - otherTime) > 2.0) {
-			//if time difference greater than 2 seconds update time to be the later time.
-			setCurrentTime(otherTime);
+		if (playerRef.current) {
+			let myTime = await playerRef.current.internalPlayer.getCurrentTime();
+			console.log("Within getTime funcion: ", myTime, "Other user's time: ", otherTime);
+			if (Math.abs(myTime - otherTime) > 2.0) {
+				//if time difference greater than 2 seconds update time to be the later time.
+				setCurrentTime(otherTime);
+			}
+			return myTime;
 		}
-		return myTime;
 	}
 
 	useEffect(() => {
-		//socket.emit("join_room", {room:room,watchList:searchResponse});
-
-		socket.emit("join_room", room); //join a room..have to call again to work at refresh..
-		//I could also send the current video list here I guess?
+		//socket.emit("join_room", room); //join a room..have to call again to work at refresh..?
 
 		socket.on("user-played", (data) => {
 			console.log("other user clicked play..(room): " + room);
-			playerRef.current.internalPlayer.playVideo();
+			console.log(playerRef);
+			console.log(playerRef.current);
+			//console.log(playerRef.current.internalPlayer);
+
+			if (playerRef.current) playerRef.current.internalPlayer.playVideo();
 		});
 		socket.on("update-time", (data) => {
 			console.log("dataInfo: " + data);
 			let time = getTime(data);
-			console.log(
-				"[object,promise]compared with my time... : " + time //says object promise?
-			);
 
 			//set to larger time(max of incoming and currentTime)
 			//if within 3 sec.
@@ -82,20 +109,28 @@ export default function WatchRoom({ socket }) {
 
 		socket.on("user-paused", (data) => {
 			console.log("other user clicked pause: ");
-			playerRef.current.internalPlayer.pauseVideo();
+			if (playerRef.current) playerRef.current.internalPlayer.pauseVideo(); //This is enough to fix it!?
 		});
 		socket.on("user-searched", (data) => {
 			console.log("other user searching video: ");
 			console.log(data);
 			console.log(data.videoId);
 			//playerRef.current.internalPlayer.pauseVideo();
+			//setSearchResponse((oldArray) => [...oldArray, ...data.videosDetails]);
 			setSearchResponse((oldArray) => [...oldArray, data.videoId]);
+			const tempObject = {
+				thumbnail: data.thumbnail,
+				videoId: data.videoId,
+				title: data.title,
+			};
+			setFullSearchResponse((oldArray) => [...oldArray, tempObject]);
 		});
 		socket.on("user-skipped", (data) => {
 			console.log("other user skipping video: ");
 			console.log(data);
 			//playerRef.current.internalPlayer.pauseVideo();
-			setVideoCount(data.videoCount++);
+			setVideoCount(data.videoCount);
+			//setVideoCount(data.videoCount++);
 		});
 	}, [socket]);
 
@@ -136,43 +171,33 @@ export default function WatchRoom({ socket }) {
 				console.log("recieved value from search result: ");
 				console.log(data);
 
-				setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]); //here
+				//instead I can load array of video items here and onClick of one it will add it to setSearchResponse
+				//data.map((videoItem) => setSearchResponseList(videoItem.id.videoId));
 
-				socket.emit("searchVideo", { videoId: data[0].id.videoId, room: room });
+				//console.log("thumbnail: ", response.data.items[0].snippet.thumbnails);
+				//console.log("title: ", response.data.items[0].snippet.title)
 
-				try {
-					//call backend to update req.session variable with newly searched value(following socket event searchVideo on backend)
-					let resp = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/updateSearchSession`, {
-						method: "GET",
-						credentials: "include",
-						headers: {
-							"Content-Type": "application/json",
-							room: room,
-						},
-					});
-					if (resp.ok) {
-						console.log("Backend updated videoWatch List");
-					} else {
-						console.log("Error with Backend updated videoWatch List");//What to do in the case it's a bad search?
-					}
-				} catch (err) {
-					console.log("Fetch Error:", err);
-				}
-				/*
-				//setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]); //here
-				if (searchResponse && searchResponse.length > 0) {
-					setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]); //here
-					//emit here to update other user if search result good:
-				} else {
-					setSearchResponse(data[0].id.videoId);
-				}
-				
+				const tempObject = {
+					thumbnail: data[0].snippet.thumbnails["default"].url,
+					videoId: data[0].id.videoId,
+					title: data[0].snippet.title,
+				};
 
-				//setSearchResponse(data[0].id.videoId);
-				console.log(data[0].id.videoId);
-				console.log("my searchResponse: ", searchResponse); //why is this undefined on first render?
-				// process the data here
-*/
+				console.log(tempObject);
+
+				setFullSearchResponse((oldArray) => [...oldArray, tempObject]);
+				console.log(fullSearchResponse);
+
+				//setSearchResponse((oldArray) => [...oldArray, tempObject]);
+				setSearchResponse((oldArray) => [...oldArray, data[0].id.videoId]);
+				console.log("Data after search: ", data);
+				console.log("VideoThumbnail after search: ", data[0].snippet.thumbnails["default"]);
+				socket.emit("searchVideo", {
+					videoId: data[0].id.videoId,
+					thumbnail: data[0].snippet.thumbnails["default"].url,
+					title: data[0].snippet.title,
+					room: room,
+				});
 			} else {
 				console.log("HTTP Error:", resp.status);
 			}
@@ -212,12 +237,35 @@ export default function WatchRoom({ socket }) {
 				</button>
 			</form>
 
+			<div className="VideoListing">
+				{fullSearchResponse &&
+					fullSearchResponse.map((video, index) => (
+						<div
+							className="Video"
+							onClick={() => {
+								//const tempArray = [...searchResponse];
+								//tempArray[videoCount] = video.videoId;
+								//setSearchResponse(tempArray);
+								setVideoCount(index);
+								console.log("Clicked index in queue: ", index);
+								socket.emit("skipVideo", { videoCount: index, room: room });
+								//emit socket change here for other client to update?
+							}}
+						>
+							<h3>{video.title}</h3>
+							<img src={video.thumbnail} alt="Video Thumbnail" />
+						</div>
+					))}
+			</div>
+
 			<h3>Room Code is: {room}</h3>
 			<h3>Current videoCount is: {JSON.stringify(videoCount)}</h3>
 			<div className="YoutubePlayer">
 				<YouTube
 					ref={playerRef}
-					videoId={searchResponse == undefined ? null : searchResponse[videoCount]} // defaults -> ''
+					//videoId={searchResponse.length > 0 ? null : searchResponse[videoCount]}
+					videoId={searchResponse == undefined ? null : searchResponse[videoCount]}
+					// defaults -> ''
 					//id={string} // defaults -> ''
 					//className={string} // defaults -> ''
 					//iframeClassName={string} // defaults -> ''
@@ -225,7 +273,12 @@ export default function WatchRoom({ socket }) {
 					//title={string} // defaults -> ''
 					//loading={string} // defaults -> undefined
 					//opts={obj} // defaults -> {}
-					//onReady={(event) => {
+					onReady={(event) => {
+						console.log(playerRef);
+						console.log(playerRef.current);
+						console.log(playerRef.current.internalPlayer);
+						socket.emit("join_room", room);
+					}}
 					//console.log(event);
 					//console.log(event.target);
 					//console.log("now playing(by default)");
@@ -238,7 +291,7 @@ export default function WatchRoom({ socket }) {
 						console.log("now playing");
 						//here im going to emit an event to get current time.
 						//when other clients recive the event..compare to their own. If within 3 seconds:do nothing
-						//else: update current time = recieved time from event.
+						//else: update current time = recieved time from event. (always updates to the one clicked)
 						socket.emit("updateTime", { currentTime: event.target.getCurrentTime(), room: room });
 
 						event.target.playVideo();

@@ -7,7 +7,7 @@ export default function Navbar() {
 			<nav className="Nav">
 				<ul className="Nav-elements">
 					<li>
-						<a href="https://ethan-gordon.netlify.app/">Home</a>
+						<a href={process.env.REACT_APP_FRONTEND_URL}>Home</a>
 					</li>
 					<li>
 						<a href="/Projects">Projects</a>
