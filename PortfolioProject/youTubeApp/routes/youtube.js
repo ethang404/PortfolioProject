@@ -16,18 +16,6 @@ class AccessTokenManager {
 	}
 }
 
-class AccessTokenManager {
-	static accessToken = null;
-
-	static setAccessToken(token) {
-		AccessTokenManager.accessToken = token;
-	}
-
-	static getAccessToken() {
-		return AccessTokenManager.accessToken;
-	}
-}
-
 async function refreshAccessToken(refreshToken) {
 	try {
 		const response = await axios.post("https://oauth2.googleapis.com/token", {
