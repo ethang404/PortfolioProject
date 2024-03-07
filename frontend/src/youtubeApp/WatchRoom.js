@@ -47,34 +47,36 @@ export default function WatchRoom({ socket }) {
 		console.log("whoop: ", data);
 		setSearchResponse(data.videoList); //also attach a videoCount variable so i know what index I'm on(video1 vs video2 in queue) for late join users/refreshes
 		setVideoCount(data.videoCount);
+
+		//I should also set the timestamp here to update new user's time
 	}
 
 	async function getTime(otherTime) {
-		let myTime = await playerRef.current.internalPlayer.getCurrentTime();
-		console.log("Within getTime funcion: ", myTime, "Other user's time: ", otherTime);
-		if (Math.abs(myTime - otherTime) > 2.0) {
-			//if time difference greater than 2 seconds update time to be the later time.
-			setCurrentTime(otherTime);
+		if (playerRef.current) {
+			let myTime = await playerRef.current.internalPlayer.getCurrentTime();
+			console.log("Within getTime funcion: ", myTime, "Other user's time: ", otherTime);
+			if (Math.abs(myTime - otherTime) > 2.0) {
+				//if time difference greater than 2 seconds update time to be the later time.
+				setCurrentTime(otherTime);
+			}
+			return myTime;
 		}
-		return myTime;
 	}
 
 	useEffect(() => {
-		//socket.emit("join_room", {room:room,watchList:searchResponse});
-
-		socket.emit("join_room", room); //join a room..have to call again to work at refresh..
-		//I could also send the current video list here I guess?
+		//socket.emit("join_room", room); //join a room..have to call again to work at refresh..?
 
 		socket.on("user-played", (data) => {
 			console.log("other user clicked play..(room): " + room);
-			playerRef.current.internalPlayer.playVideo();
+			console.log(playerRef);
+			console.log(playerRef.current);
+			//console.log(playerRef.current.internalPlayer);
+
+			if (playerRef.current) playerRef.current.internalPlayer.playVideo();
 		});
 		socket.on("update-time", (data) => {
 			console.log("dataInfo: " + data);
 			let time = getTime(data);
-			console.log(
-				"[object,promise]compared with my time... : " + time //says object promise?
-			);
 
 			//set to larger time(max of incoming and currentTime)
 			//if within 3 sec.
@@ -82,7 +84,7 @@ export default function WatchRoom({ socket }) {
 
 		socket.on("user-paused", (data) => {
 			console.log("other user clicked pause: ");
-			playerRef.current.internalPlayer.pauseVideo();
+			if (playerRef.current) playerRef.current.internalPlayer.pauseVideo(); //This is enough to fix it!?
 		});
 		socket.on("user-searched", (data) => {
 			console.log("other user searching video: ");
@@ -226,7 +228,12 @@ export default function WatchRoom({ socket }) {
 					//title={string} // defaults -> ''
 					//loading={string} // defaults -> undefined
 					//opts={obj} // defaults -> {}
-					//onReady={(event) => {
+					onReady={(event) => {
+						console.log(playerRef);
+						console.log(playerRef.current);
+						console.log(playerRef.current.internalPlayer);
+						socket.emit("join_room", room);
+					}}
 					//console.log(event);
 					//console.log(event.target);
 					//console.log("now playing(by default)");
