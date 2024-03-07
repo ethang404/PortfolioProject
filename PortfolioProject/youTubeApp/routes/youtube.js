@@ -16,6 +16,18 @@ class AccessTokenManager {
 	}
 }
 
+class AccessTokenManager {
+	static accessToken = null;
+
+	static setAccessToken(token) {
+		AccessTokenManager.accessToken = token;
+	}
+
+	static getAccessToken() {
+		return AccessTokenManager.accessToken;
+	}
+}
+
 async function refreshAccessToken(refreshToken) {
 	try {
 		const response = await axios.post("https://oauth2.googleapis.com/token", {
@@ -120,11 +132,11 @@ async function test(req) {
 	console.log("your query is:", q);
 	console.log(
 		"full call is: ",
-		"https://www.googleapis.com/youtube/v3/search?q=" + q + "&type=video"
+		"https://www.googleapis.com/youtube/v3/search?q=" + q + "&type=video" + "&part=snippet"
 	);
 	try {
 		let response = await axios.get(
-			"https://www.googleapis.com/youtube/v3/search?q=" + q + "&type=video",
+			"https://www.googleapis.com/youtube/v3/search?q=" + q + "&type=video" + "&part=snippet",
 			{
 				headers: {
 					Authorization: `Bearer ${accessToken}`,
@@ -165,6 +177,7 @@ router.get("/searchVideo", verifyToken, verifyWatchObject, async (req, res) => {
 	try {
 		const searchRes = await test(req);
 		console.log("returning vals...", searchRes[0].id);
+		console.log("full searchRes in searchVideo: ", searchRes);
 		res.send(searchRes);
 	} catch (e) {
 		console.log("Error with searching(in /searchVideo", e);
@@ -197,6 +210,8 @@ router.get("/testingURL", (req, res) => {
 
 var watchObject = {};
 
+//instead of appending strings to watchObject[room]- videoList. I'm just going to make videoList the Data
+
 router.get("/loadWatchList", verifyToken, verifyWatchObject, (req, res) => {
 	console.log("I am now in loadWatchList---------------------------");
 	console.log("current accessToken in loadWatchList: ", req.cookies.accessToken);
@@ -205,18 +220,26 @@ router.get("/loadWatchList", verifyToken, verifyWatchObject, (req, res) => {
 	let tempRoom = req.headers.room;
 	if (watchObject[tempRoom] == null || watchObject[tempRoom] == undefined) {
 		console.log("init watchObject in skipVideo");
-		watchObject[tempRoom] = { videoList: [], videoCount: 0, timestamp: Date.now() };
+		watchObject[tempRoom] = {
+			videosDetails: [], //{ videoId: "", thumbnail: "", title: "" }
+			videoCount: 0,
+			timestamp: Date.now(),
+		};
+		//watchObject[tempRoom] = { videoList: [], videoCount: 0, timestamp: Date.now() };
 	}
 
 	if (tempRoom in watchObject) {
 		console.log("this is what im sending back: ", watchObject[tempRoom]);
-		res.send(watchObject[tempRoom]); //send back as 23: {videoList:[tyler1,speedy],1}
+		res.send(watchObject[tempRoom]); //will send back as 23: videoDetails: [{ videoId: "ffff", thumbnail: "url1", title: "Pixelmon ep 1" },
+		//{ videoId: "fdsfdsaf", thumbnail: "url2", title: "Dopa Down" }], videoCount: 0, timestamp: 04:30
 	} else {
 		res.send(); //return nothing?
 	}
 
 	//const accessToken = req.headers.authorization.split(" ")[1];
 });
+
+//SOCKET FUNCTIONS HERE
 
 var returnRouter = function (io) {
 	io.on("connection", (socket) => {
@@ -258,23 +281,38 @@ var returnRouter = function (io) {
 			console.log("my-Data(videoId): ", data.videoId);
 			console.log("my-room: ", data.room);
 
+			console.log("My entire data in socket(SearchVideo): ", data);
+
 			if (watchObject[data.room] == null || watchObject[data.room] == undefined) {
 				console.log("init watchObject in searchVideo");
-				watchObject[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
+				watchObject[data.room] = {
+					videosDetails: [], //{ videoId: "", thumbnail: "", title: "" }
+					videoCount: 0,
+					timestamp: Date.now(),
+				};
+				//watchObject[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
 			}
 
-			watchObject[data.room].videoList.push(data.videoId); //store videoId we're adding in temp object
+			//watchObject[data.room].videoList.push(data.videoId);
+			watchObject[data.room].videosDetails.push({
+				videoId: data.videoId,
+				thumbnail: data.thumbnail,
+				title: data.title,
+			});
 
 			console.log("searchVideo: ", data.videoId);
 			console.log("my data: ", data);
+
+			console.log("Watch object after search is(for 1 room): ", watchObject[data.room]);
 			//play video(video id) event to room
 			socket.to(data.room).emit("user-searched", data);
 		});
+
 		socket.on("skipVideo", (data) => {
 			console.log("my-roomSkippy: ", data);
 			if (watchObject[data.room] == null || watchObject[data.room] == undefined) {
 				console.log("init watchObject in skipVideo");
-				watchObject[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
+				//watchObject[data.room] = { videoList: [], videoCount: 0, timestamp: Date.now() };
 			}
 
 			watchObject[data.room].videoCount = data.videoCount;
