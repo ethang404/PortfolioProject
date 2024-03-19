@@ -21,11 +21,13 @@ export default function PrivateRoute() {
 		});
 		if (resp.ok) {
 			console.log("user is valid!");
+			setLoading(false);
 			setLoggedIn(true);
 		} else {
 			console.log("invalid user", resp);
+			setLoading(false);
+			navigate(`${process.env.REACT_APP_BACKEND_URL}/Project/YoutubeApp/Login`);
 		}
-		setLoading(false);
 	}
 
 	useEffect(() => {

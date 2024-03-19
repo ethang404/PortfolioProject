@@ -16,10 +16,10 @@ export default function Homepage({ socket }) {
 		// If room is not provided by user, generate a random number between 1 to 100
 		if (room === "") {
 			const randomRoomNumber = Math.floor(Math.random() * 100) + 1;
-			socket.emit("join_room", randomRoomNumber);
+			//socket.emit("join_room", randomRoomNumber); //re-consider joining a room here? Maybe join room on render of next page
 			navigate(`/Project/YoutubeApp/Watch/${randomRoomNumber}`);
 		} else {
-			socket.emit("join_room", room);
+			//socket.emit("join_room", room);
 			console.log("joining room");
 			navigate(`/Project/YoutubeApp/Watch/${room}`);
 		}
