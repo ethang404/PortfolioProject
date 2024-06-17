@@ -32,8 +32,10 @@ async function refreshAccessToken(refreshToken) {
 		console.log("New accessToken: ", accessToken);
 		return accessToken;
 	} catch (error) {
-		console.error("Error refreshing access token:", error);
-		throw new Error("Failed to refresh access token");
+		console.error("Error refreshing access token:", error); //edge case here where refreshToken expires...need to clear cookie(s)
+		//send response to frontend to clear cookie?
+		return null;
+		//throw new Error("Failed to refresh access token");
 	}
 }
 
@@ -75,12 +77,12 @@ async function verifyToken(req, res, next) {
 			console.log("my old accessToken in verifyToken: ", req.cookies.accessToken);
 
 			const refreshedToken = await refreshAccessToken(req.cookies.refreshToken);
-			console.log("new my accessToken: ", refreshedToken);
+
 			if (!refreshedToken) {
 				console.log("INVALID-Token on backend");
 				return res.status(401).json({ error: "Invalid token" });
 			}
-
+			console.log("new my accessToken: ", refreshedToken);
 			res.cookie("accessToken", refreshedToken, {
 				maxAge: 8640000,
 				httpOnly: true,
@@ -238,6 +240,7 @@ var returnRouter = function (io) {
 			console.log("Joining room: " + data);
 			socket.join(data); //joins room
 			console.log(data);
+			socket.to(data).emit("new-user", data);
 
 			//add socket.emit to return watchObject data to the new user when joining an already filld room
 			//I dont think this is called

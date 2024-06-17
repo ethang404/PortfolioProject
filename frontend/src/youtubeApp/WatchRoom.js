@@ -5,6 +5,9 @@ import { useState, useEffect, useRef } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
 import { useNavigate, useParams } from "react-router-dom";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 //const socket = io.connect("http://localhost:8080");
 //var socket = io.connect();
 
@@ -18,10 +21,13 @@ export default function WatchRoom({ socket }) {
 	const [videoCount, setVideoCount] = useState(0);
 	//think I need a different setup to store elements of videos
 	const [currentTime, setCurrentTime] = useState(0.0);
+	const [showNotification, setShowNotification] = useState(false);
 
 	useEffect(() => {
 		//this is for if user joins late
 		console.log("on first render..here is my env variable: ", process.env.REACT_APP_BACKEND_URL);
+		console.log("First room join");
+		socket.emit("join_room", room);
 		loadWatchList();
 	}, []);
 
@@ -88,6 +94,8 @@ export default function WatchRoom({ socket }) {
 		}
 	}
 
+	const handleNewUserJoin = () => toast("New User Connected!");
+
 	useEffect(() => {
 		//socket.emit("join_room", room); //join a room..have to call again to work at refresh..?
 
@@ -131,6 +139,11 @@ export default function WatchRoom({ socket }) {
 			//playerRef.current.internalPlayer.pauseVideo();
 			setVideoCount(data.videoCount);
 			//setVideoCount(data.videoCount++);
+		});
+
+		socket.on("new-user", (data) => {
+			console.log("New user joined");
+			handleNewUserJoin();
 		});
 	}, [socket]);
 
@@ -215,11 +228,19 @@ export default function WatchRoom({ socket }) {
 		//3 = buffering
 	}
 
+	const handlePrev = () => {
+		setVideoCount((prevIndex) => (prevIndex === 0 ? fullSearchResponse.length - 1 : prevIndex - 1));
+	};
+
+	const handleNext = () => {
+		setVideoCount((prevIndex) => (prevIndex === fullSearchResponse.length - 1 ? 0 : prevIndex + 1));
+	};
+
 	return (
 		<div className="Parent">
+			<ToastContainer />
 			<h3>You can search for a video in the box below! Give it a go!</h3>
 			<form className="userInput">
-				<label>Search for Video:</label>
 				<input
 					type="text"
 					required
@@ -237,29 +258,32 @@ export default function WatchRoom({ socket }) {
 				</button>
 			</form>
 
-			<div className="VideoListing">
-				{fullSearchResponse &&
-					fullSearchResponse.map((video, index) => (
-						<div
-							className="Video"
-							onClick={() => {
-								//const tempArray = [...searchResponse];
-								//tempArray[videoCount] = video.videoId;
-								//setSearchResponse(tempArray);
-								setVideoCount(index);
-								console.log("Clicked index in queue: ", index);
-								socket.emit("skipVideo", { videoCount: index, room: room });
-								//emit socket change here for other client to update?
-							}}
-						>
-							<h3>{video.title}</h3>
-							<img src={video.thumbnail} alt="Video Thumbnail" />
+			<div className="horizontal-list-container">
+				<button onClick={handlePrev}>&lt;</button>
+				<div className="horizontal-list">
+					{fullSearchResponse.map((item, index) => (
+						<div key={index} className={index === videoCount ? "list-item active" : "list-item"}>
+							<h2>{item.title}</h2>
+							<img src={item.thumbnail} alt={item.title} />
 						</div>
 					))}
+				</div>
+				<button onClick={handleNext}>&gt;</button>
 			</div>
 
 			<h3>Room Code is: {room}</h3>
 			<h3>Current videoCount is: {JSON.stringify(videoCount)}</h3>
+
+			<button
+				className="CustomButton"
+				onClick={() => {
+					setVideoCount(videoCount + 1);
+					socket.emit("skipVideo", { videoCount: videoCount + 1, room: room });
+				}}
+			>
+				Skip
+			</button>
+
 			<div className="YoutubePlayer">
 				<YouTube
 					ref={playerRef}
@@ -277,7 +301,8 @@ export default function WatchRoom({ socket }) {
 						console.log(playerRef);
 						console.log(playerRef.current);
 						console.log(playerRef.current.internalPlayer);
-						socket.emit("join_room", room);
+						//console.log("I have joined room");
+						//socket.emit("join_room", room);
 					}}
 					//console.log(event);
 					//console.log(event.target);
@@ -312,15 +337,6 @@ export default function WatchRoom({ socket }) {
 					//onPlaybackQualityChange={func} // defaults -> noop
 				/>
 			</div>
-			<button
-				className="CustomButton"
-				onClick={() => {
-					setVideoCount(videoCount + 1);
-					socket.emit("skipVideo", { videoCount: videoCount + 1, room: room });
-				}}
-			>
-				Skip
-			</button>
 			<button className="logoutButton" onClick={logout}>
 				Logout
 			</button>
