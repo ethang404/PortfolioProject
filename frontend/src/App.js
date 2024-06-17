@@ -16,6 +16,7 @@ import TodoRegister from "./todo/TodoRegister";
 import WatchRoom from "./youtubeApp/WatchRoom";
 import Login from "./youtubeApp/Login";
 import YouTubeHomePage from "./youtubeApp/Homepage";
+import PrivacyPolicy from "./youtubeApp/PrivacyPolicy";
 import io from "socket.io-client";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
@@ -32,7 +33,7 @@ function App() {
 					<Route exact path="/Project/To-do-register" element={<TodoRegister />}></Route>
 
 					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
-
+					<Route exact path="/Project/YoutubeApp/Privacy" element={<PrivacyPolicy />}></Route>
 					<Route element={<YouTubePrivateRoutes />}>
 						<Route
 							exact
