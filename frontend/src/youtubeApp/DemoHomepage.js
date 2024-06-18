@@ -8,17 +8,23 @@ const HomePage = () => {
 			</header>
 			<section className="description">
 				<p>
-					Welcome to the Youtube Player App. This app allows you to play and manage your favorite
-					YouTube videos seamlessly.
+					Welcome to the Youtube Player App. This app allows you to search and play YouTube videos
+					seamlessly along with your friends!
+				</p>
+				<br></br>
+				<p>
+					Simply login with your google account, grant permissions, and join a room with a friend.
 				</p>
 			</section>
 			<section className="tech-stack">
 				<h2>Tech Stack Used</h2>
 				<ul>
 					<li>React</li>
-					<li>React Router</li>
 					<li>CSS</li>
-					<li>YouTube API</li>
+					<li>---------------</li>
+					<li>Express</li>
+					<li>Passport (for OAUTH2)</li>
+					<li>YouTube Data API</li>
 				</ul>
 			</section>
 			<section className="demo-video">
@@ -32,7 +38,9 @@ const HomePage = () => {
 			</section>
 
 			<footer className="footer">
-				<a href="/Project/YoutubeApp/Login/">Click here to see</a>
+				<a className="login-link" href="/Project/YoutubeApp/Login/">
+					Click here to see
+				</a>
 			</footer>
 		</div>
 	);
