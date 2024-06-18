@@ -110,7 +110,7 @@ export default function HomePage() {
 							specifically Socket.IO. I've deployed the frontend to Netlify(React.js) and the
 							backend(Node.js) to AWS EC2 instance.
 						</p>
-						<a href="/Project/YoutubeApp/Login/">Click here to see</a>
+						<a href="/Project/YoutubeApp/DemoPage/">Click here to see</a>
 					</div>
 				</section>
 			</section>
