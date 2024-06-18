@@ -230,10 +230,13 @@ export default function WatchRoom({ socket }) {
 
 	const handlePrev = () => {
 		setVideoCount((prevIndex) => (prevIndex === 0 ? fullSearchResponse.length - 1 : prevIndex - 1));
+		if (videoCount > 0) socket.emit("skipVideo", { videoCount: videoCount - 1, room: room });
 	};
 
 	const handleNext = () => {
 		setVideoCount((prevIndex) => (prevIndex === fullSearchResponse.length - 1 ? 0 : prevIndex + 1));
+		if (videoCount < searchResponse.length)
+			socket.emit("skipVideo", { videoCount: videoCount + 1, room: room });
 	};
 
 	return (

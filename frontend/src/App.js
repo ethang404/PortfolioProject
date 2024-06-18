@@ -16,7 +16,10 @@ import TodoRegister from "./todo/TodoRegister";
 import WatchRoom from "./youtubeApp/WatchRoom";
 import Login from "./youtubeApp/Login";
 import YouTubeHomePage from "./youtubeApp/Homepage";
-import PrivacyPolicy from "./youtubeApp/PrivacyPolicy";
+
+import PrivacyPolicy from "./youtubeApp/PrivacyPolicy"; //google crap here
+import DemoHomePageYT from "./youtubeApp/DemoHomepage";
+
 import io from "socket.io-client";
 
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
@@ -34,6 +37,8 @@ function App() {
 
 					<Route exact path="/Project/YoutubeApp/Login/*" element={<Login />}></Route>
 					<Route exact path="/Project/YoutubeApp/Privacy" element={<PrivacyPolicy />}></Route>
+					<Route exact path="/Project/YoutubeApp/DemoPage" element={<DemoHomePageYT />}></Route>
+
 					<Route element={<YouTubePrivateRoutes />}>
 						<Route
 							exact
