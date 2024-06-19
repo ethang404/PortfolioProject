@@ -10,10 +10,9 @@ const PrivacyPolicy = () => {
 				<section>
 					<h2>Introduction</h2>
 					<p>
-						Welcome to my youtube viewing application. This Privacy Policy explains how I collect,
-						use, disclose, and protect your information when you use my Google OAuth2 app. I am
-						committed to protecting your privacy and ensuring a positive experience on this
-						application.
+						Welcome to my WatchLounge application. This Privacy Policy explains how I collect, use,
+						disclose, and protect your information when you use my Google OAuth2 app. I am committed
+						to protecting your privacy and ensuring a positive experience on this application.
 					</p>
 
 					<p>
@@ -40,7 +39,7 @@ const PrivacyPolicy = () => {
 					<ul>
 						<li>
 							<strong>To Search for videos using your data:</strong> I use your information to use
-							the youtube API to search for the queries you generate and want to view on my website.
+							the YouTube API to search for the queries you generate and want to view on my website.
 						</li>
 					</ul>
 				</section>
@@ -72,6 +71,18 @@ const PrivacyPolicy = () => {
 						changes by posting the new Privacy Policy on my app and updating the effective date.
 						Your continued use of my app after any changes indicates your acceptance of the updated
 						Privacy Policy.
+					</p>
+				</section>
+				<section>
+					<h2>Limited Use Requirements</h2>
+					<p>
+						This application's use and transfer to any other app of information received from Google
+						APIs will adhere to Google API Services User Data Policy, including the Limited Use
+						requirements.
+					</p>
+					<p>
+						You may find more details on their requirements here:
+						<a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes"></a>
 					</p>
 				</section>
 				<section>

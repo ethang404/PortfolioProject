@@ -1,6 +1,5 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState, useEffect, useCallback } from "react";
-import { CookieUtil } from "../utils/CookieUtil";
 import io from "socket.io-client";
 
 import "./Homepage.css";
@@ -24,46 +23,6 @@ export default function Homepage({ socket }) {
 			navigate(`/Project/YoutubeApp/Watch/${room}`);
 		}
 	}
-
-	async function tempFunc() {
-		try {
-			const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/yt/testingURL`, {
-				method: "GET",
-				credentials: "include",
-			});
-			if (!response.ok) {
-				throw new Error("Request failed with status: " + response.status);
-			}
-			const data = await response.json();
-			console.log(data);
-
-			// Process the data or update the state with the received data
-		} catch (error) {
-			console.error(error);
-			// Handle the error
-		}
-		let { accessToken, refreshToken } = CookieUtil();
-		console.log("accessToken(homepage2):", accessToken);
-		console.log("refreshToken(homepage2):", refreshToken);
-	}
-
-	useEffect(() => {
-		//let { accessToken, refreshToken } = CookieUtil();
-		//console.log("accessToken(homepage):", accessToken);
-		//console.log("refreshToken(homepage):", refreshToken);
-		/*const urlParams = new URLSearchParams(window.location.search);
-		const token = urlParams.get("accessToken");
-		setAccessToken(token);*/
-		// Step 3: Now, you can access the different values within the cookie
-		/*console.log(token);
-		console.log(accessToken);
-		localStorage.setItem("accessToken", JSON.stringify(token));
-
-		var temp = localStorage.getItem("accessToken");
-		//setToken(temp);
-		console.log("Homepage access Token: ", accessToken);*/
-		//testing cookies
-	}, []);
 
 	return (
 		<div className="homepage-container">

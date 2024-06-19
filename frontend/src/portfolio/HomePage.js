@@ -103,10 +103,10 @@ export default function HomePage() {
 						</p>
 					</div>
 					<div className="project">
-						<h4>Youtube WatchRoom Project</h4>
+						<h4>WatchLounge</h4>
 						<p>
-							This youtube watchroom project allows you to join a room with multiple friends and
-							watch youtube videos at the same time. This is accomplished via websockets
+							This YouTube watchroom project allows you to join a room with multiple friends and
+							watch YouTube videos at the same time. This is accomplished via websockets
 							specifically Socket.IO. I've deployed the frontend to Netlify(React.js) and the
 							backend(Node.js) to AWS EC2 instance.
 						</p>
