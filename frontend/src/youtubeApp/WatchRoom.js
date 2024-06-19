@@ -25,7 +25,7 @@ export default function WatchRoom({ socket }) {
 
 	useEffect(() => {
 		//this is for if user joins late
-		console.log("on first render..here is my env variable: ", process.env.REACT_APP_BACKEND_URL);
+		//console.log("on first render..here is my env variable: ", process.env.REACT_APP_BACKEND_URL);
 		console.log("First room join");
 		socket.emit("join_room", room);
 		loadWatchList();
