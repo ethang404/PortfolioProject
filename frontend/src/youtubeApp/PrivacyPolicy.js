@@ -82,7 +82,9 @@ const PrivacyPolicy = () => {
 					</p>
 					<p>
 						You may find more details on their requirements here:
-						<a href="https://developers.google.com/terms/api-services-user-data-policy#additional_requirements_for_specific_api_scopes"></a>
+						<a href="https://developers.google.com/terms/api-services-user-data-policy">
+							Google API Services User Data Policy
+						</a>
 					</p>
 				</section>
 				<section>
